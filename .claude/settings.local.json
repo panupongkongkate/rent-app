@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef database:*)",
+      "Bash(dotnet ef migrations:*)",
+      "Bash(dotnet build)",
+      "Bash(dotnet run:*)",
+      "Bash(sqlite3:*)",
+      "Bash(/home/panupong/.claude/local/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"exportCustomers|Export\" admin/customers.html)",
+      "Bash(ls:*)",
+      "Bash(kill:*)",
+      "Bash(dotnet script:*)",
+      "Bash(python3:*)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(touch:*)",
+      "Bash(npm run dev:*)"
+    ],
+    "deny": []
+  }
+}

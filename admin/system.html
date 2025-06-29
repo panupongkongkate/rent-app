@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการระบบและพนักงาน - ระบบเช่ายืมหนังสือการ์ตูน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 overflow-hidden flex">
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                <span class="text-gray-700">กำลังดำเนินการ...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Desktop Sidebar -->
+    <div class="h-screen w-72 bg-white/95 backdrop-blur-sm shadow-2xl border-r border-slate-200/50 lg:block hidden" id="sidebar">
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-cyan-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <!-- Admin Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูผู้ดูแลระบบ</h3>
+                </div>
+                
+                <a href="/admin/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-cyan-500 bg-cyan-50 rounded-lg group-hover:bg-cyan-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/admin/books.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-books text-lg"></i>
+                    </div>
+                    <span>จัดการหนังสือ</span>
+                </a>
+
+                <a href="/admin/system.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-cogs text-lg"></i>
+                    </div>
+                    <span>จัดการระบบ</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+
+                <a href="/admin/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">การทำงานทั่วไป</h3>
+                </div>
+
+                <a href="/staff/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-violet-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crown text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Admin</p>
+                    <p class="text-xs text-slate-500 user-role">ผู้ดูแลระบบ</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="lg:hidden fixed inset-0 z-20 bg-black bg-opacity-50 hidden" id="sidebarOverlay"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div class="lg:hidden fixed inset-y-0 left-0 z-30 w-72 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out" id="mobileSidebar">
+        <!-- Copy of desktop sidebar content for mobile -->
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-cyan-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <!-- Admin Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูผู้ดูแลระบบ</h3>
+                </div>
+                
+                <a href="/admin/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-cyan-500 bg-cyan-50 rounded-lg group-hover:bg-cyan-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/admin/books.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-books text-lg"></i>
+                    </div>
+                    <span>จัดการหนังสือ</span>
+                </a>
+
+                <a href="/admin/system.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-cogs text-lg"></i>
+                    </div>
+                    <span>จัดการระบบ</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+
+                <a href="/admin/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">การทำงานทั่วไป</h3>
+                </div>
+
+                <a href="/staff/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-violet-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crown text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Admin</p>
+                    <p class="text-xs text-slate-500 user-role">ผู้ดูแลระบบ</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="lg:hidden">
+        <button id="sidebarToggle" class="fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-md">
+            <i class="fas fa-bars text-gray-600"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 h-screen overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-slate-50 shadow-sm border-b border-slate-200">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">จัดการระบบและพนักงาน</h1>
+                        <p class="text-sm sm:text-base text-gray-600">ตั้งค่าระบบ จัดการพนักงาน และควบคุมการใช้งาน</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-6 bg-slate-50 min-h-full">
+            <!-- System Management Tabs -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="flex space-x-8 px-6">
+                        <button id="employeeTab" class="py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600" onclick="showTab('employee')">
+                            <i class="fas fa-users mr-2"></i>จัดการพนักงาน
+                        </button>
+                        <button id="settingsTab" class="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" onclick="showTab('settings')">
+                            <i class="fas fa-cog mr-2"></i>ตั้งค่าระบบ
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Employee Management Section -->
+                <div id="employeeSection" class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800">จัดการพนักงาน</h3>
+                        <button onclick="showAddEmployeeModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-plus mr-2"></i>เพิ่มพนักงาน
+                        </button>
+                    </div>
+
+                    <!-- Employee List -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">พนักงาน</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ติดต่อ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">บทบาท</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">การดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Dynamic content will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settingsSection" class="p-6 hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-6">ตั้งค่าระบบ</h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Rental Settings -->
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">การตั้งค่าการยืม</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ระยะเวลายืมเริ่มต้น (วัน)</label>
+                                    <input type="number" id="defaultRentalDays" min="1" max="90" value="14" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ค่าปรับต่อวัน (บาท)</label>
+                                    <input type="number" id="finePerDay" min="0" step="0.01" value="5.00" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนหนังสือสูงสุดที่ยืมได้ต่อครั้ง</label>
+                                    <input type="number" id="maxBooksPerRental" min="1" max="20" value="5" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Settings -->
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <h4 class="text-md font-semibold text-gray-800 mb-4">ข้อมูลร้าน</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อร้าน</label>
+                                    <input type="text" id="shopName" value="Comic Rental Shop" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรศัพท์</label>
+                                    <input type="tel" id="shopPhone" value="02-123-4567" 
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ที่อยู่</label>
+                                    <textarea id="shopAddress" rows="3" 
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">123 ถนนสุขุมวิท แขวงคลองตัน เขตคลองตัน กรุงเทพ 10110</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="saveSettings()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                            <i class="fas fa-save mr-2"></i>บันทึกการตั้งค่า
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Employee Modal -->
+    <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="employeeModalTitle" class="text-lg font-semibold text-gray-800">เพิ่มพนักงานใหม่</h3>
+                <button onclick="closeEmployeeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="employeeForm" class="space-y-4">
+                <input type="hidden" id="employeeId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้ *</label>
+                    <input type="text" id="username" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน *</label>
+                    <input type="password" id="password" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล *</label>
+                    <input type="text" id="fullName" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">บทบาท *</label>
+                    <select id="role" required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">เลือกบทบาท</option>
+                        <option value="Admin">ผู้ดูแลระบบ</option>
+                        <option value="Staff">พนักงาน</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์</label>
+                    <input type="tel" id="phone" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
+                    <input type="email" id="email" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeEmployeeModal()" 
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let employees = [];
+        let editingEmployeeId = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Mobile sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                mobileSidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            }
+
+            sidebarToggle?.addEventListener('click', toggleSidebar);
+            sidebarOverlay?.addEventListener('click', toggleSidebar);
+
+            // Setup form handler
+            document.getElementById('employeeForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await saveEmployee();
+            });
+
+            // Load initial data
+            await loadEmployees();
+            await loadSettings();
+        });
+
+        function showTab(tab) {
+            const tabs = ['employee', 'settings'];
+            const sections = ['employeeSection', 'settingsSection'];
+            const tabButtons = ['employeeTab', 'settingsTab'];
+
+            tabs.forEach((t, index) => {
+                const section = document.getElementById(sections[index]);
+                const button = document.getElementById(tabButtons[index]);
+                
+                if (t === tab) {
+                    section.classList.remove('hidden');
+                    button.className = 'py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600';
+                } else {
+                    section.classList.add('hidden');
+                    button.className = 'py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300';
+                }
+            });
+        }
+
+        async function loadEmployees() {
+            try {
+                utils.showLoading();
+                // In a real app, this would be an API call
+                employees = [
+                    {
+                        employeeId: 1,
+                        username: 'admin01',
+                        fullName: 'ผู้ดูแลระบบ',
+                        role: 'Admin',
+                        phone: '02-123-4567',
+                        email: 'admin@comicrental.com',
+                        status: 'Active',
+                        createdDate: '2024-01-01',
+                        lastLogin: '2024-01-15T10:30:00'
+                    },
+                    {
+                        employeeId: 2,
+                        username: 'staff01',
+                        fullName: 'พนักงานทดสอบ',
+                        role: 'Staff',
+                        phone: '02-123-4568',
+                        email: 'staff@comicrental.com',
+                        status: 'Active',
+                        createdDate: '2024-01-02',
+                        lastLogin: '2024-01-15T09:15:00'
+                    }
+                ];
+                displayEmployees();
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการโหลดข้อมูลพนักงาน', 'error');
+                console.error('Error loading employees:', error);
+            }
+        }
+
+        function displayEmployees() {
+            const tbody = document.getElementById('employeeTableBody');
+            
+            tbody.innerHTML = employees.map(employee => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                                    <span class="text-white font-medium">${employee.fullName.charAt(0)}</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${employee.fullName}</div>
+                                <div class="text-sm text-gray-500">@${employee.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${employee.phone || 'ไม่ระบุ'}</div>
+                        <div class="text-sm text-gray-500">${employee.email || 'ไม่ระบุ'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            employee.role === 'Admin' 
+                                ? 'bg-purple-100 text-purple-800' 
+                                : 'bg-blue-100 text-blue-800'
+                        }">
+                            ${employee.role === 'Admin' ? 'ผู้ดูแลระบบ' : 'พนักงาน'}
+                        </span>
+                        <div class="text-xs text-gray-500 mt-1">เข้าล่าสุด: ${utils.formatDateTime(employee.lastLogin)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            employee.status === 'Active' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                        }">
+                            ${employee.status === 'Active' ? 'ใช้งาน' : 'ระงับ'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button onclick="editEmployee(${employee.employeeId})" class="text-indigo-600 hover:text-indigo-900">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${employee.employeeId !== 1 ? `
+                            <button onclick="toggleEmployeeStatus(${employee.employeeId})" class="text-yellow-600 hover:text-yellow-900">
+                                <i class="fas fa-user-slash"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddEmployeeModal() {
+            editingEmployeeId = null;
+            document.getElementById('employeeModalTitle').textContent = 'เพิ่มพนักงานใหม่';
+            document.getElementById('employeeForm').reset();
+            document.getElementById('employeeModal').classList.remove('hidden');
+        }
+
+        function editEmployee(employeeId) {
+            editingEmployeeId = employeeId;
+            const employee = employees.find(e => e.employeeId === employeeId);
+            
+            if (employee) {
+                document.getElementById('employeeModalTitle').textContent = 'แก้ไขข้อมูลพนักงาน';
+                document.getElementById('employeeId').value = employee.employeeId;
+                document.getElementById('username').value = employee.username;
+                document.getElementById('password').removeAttribute('required');
+                document.getElementById('password').placeholder = 'ไม่เปลี่ยนรหัสผ่าน';
+                document.getElementById('fullName').value = employee.fullName;
+                document.getElementById('role').value = employee.role;
+                document.getElementById('phone').value = employee.phone || '';
+                document.getElementById('email').value = employee.email || '';
+                
+                document.getElementById('employeeModal').classList.remove('hidden');
+            }
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.add('hidden');
+            editingEmployeeId = null;
+            document.getElementById('password').setAttribute('required', '');
+            document.getElementById('password').placeholder = '';
+        }
+
+        async function saveEmployee() {
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                fullName: document.getElementById('fullName').value,
+                role: document.getElementById('role').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value
+            };
+
+            try {
+                utils.showLoading();
+
+                if (editingEmployeeId) {
+                    // Update existing employee
+                    const index = employees.findIndex(e => e.employeeId === editingEmployeeId);
+                    if (index !== -1) {
+                        employees[index] = { ...employees[index], ...formData };
+                        if (!formData.password) {
+                            delete employees[index].password;
+                        }
+                    }
+                    utils.showToast('แก้ไขข้อมูลพนักงานสำเร็จ', 'success');
+                } else {
+                    // Add new employee
+                    const newEmployee = {
+                        employeeId: Math.max(...employees.map(e => e.employeeId)) + 1,
+                        ...formData,
+                        status: 'Active',
+                        createdDate: new Date().toISOString().split('T')[0],
+                        lastLogin: null
+                    };
+                    employees.push(newEmployee);
+                    utils.showToast('เพิ่มพนักงานสำเร็จ', 'success');
+                }
+
+                closeEmployeeModal();
+                displayEmployees();
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+                console.error('Error saving employee:', error);
+            }
+        }
+
+        async function toggleEmployeeStatus(employeeId) {
+            if (!confirm('ยืนยันการเปลี่ยนสถานะพนักงาน?')) return;
+
+            try {
+                const employee = employees.find(e => e.employeeId === employeeId);
+                if (employee) {
+                    employee.status = employee.status === 'Active' ? 'Inactive' : 'Active';
+                    displayEmployees();
+                    utils.showToast('เปลี่ยนสถานะพนักงานสำเร็จ', 'success');
+                }
+            } catch (error) {
+                utils.showToast('เกิดข้อผิดพลาดในการเปลี่ยนสถานะ', 'error');
+                console.error('Error toggling employee status:', error);
+            }
+        }
+
+        async function loadSettings() {
+            try {
+                // In a real app, this would load from API
+                const settings = {
+                    defaultRentalDays: 14,
+                    finePerDay: 5.00,
+                    maxBooksPerRental: 5,
+                    shopName: 'Comic Rental Shop',
+                    shopPhone: '02-123-4567',
+                    shopAddress: '123 ถนนสุขุมวิท แขวงคลองตัน เขตคลองตัน กรุงเทพ 10110'
+                };
+
+                document.getElementById('defaultRentalDays').value = settings.defaultRentalDays;
+                document.getElementById('finePerDay').value = settings.finePerDay;
+                document.getElementById('maxBooksPerRental').value = settings.maxBooksPerRental;
+                document.getElementById('shopName').value = settings.shopName;
+                document.getElementById('shopPhone').value = settings.shopPhone;
+                document.getElementById('shopAddress').value = settings.shopAddress;
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                utils.showLoading();
+
+                const settings = {
+                    defaultRentalDays: parseInt(document.getElementById('defaultRentalDays').value),
+                    finePerDay: parseFloat(document.getElementById('finePerDay').value),
+                    maxBooksPerRental: parseInt(document.getElementById('maxBooksPerRental').value),
+                    shopName: document.getElementById('shopName').value,
+                    shopPhone: document.getElementById('shopPhone').value,
+                    shopAddress: document.getElementById('shopAddress').value
+                };
+
+                // In a real app, this would save to API
+                console.log('Saving settings:', settings);
+
+                utils.showToast('บันทึกการตั้งค่าสำเร็จ', 'success');
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการบันทึกการตั้งค่า', 'error');
+                console.error('Error saving settings:', error);
+            }
+        }
+
+    </script>
+</body>
+</html>

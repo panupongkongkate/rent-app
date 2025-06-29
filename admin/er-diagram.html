@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ER Diagram - ระบบเช่ายืมหนังสือการ์ตูน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            900: '#164e63'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 overflow-hidden flex">
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                <span class="text-gray-700">กำลังโหลด ER Diagram...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Desktop Sidebar -->
+    <div class="h-screen w-72 bg-white/95 backdrop-blur-sm shadow-2xl border-r border-slate-200/50 lg:block hidden flex flex-col" id="sidebar">
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200 flex-shrink-0">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-cyan-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <!-- Admin Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูผู้ดูแลระบบ</h3>
+                </div>
+                
+                <a href="/admin/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-cyan-500 bg-cyan-50 rounded-lg group-hover:bg-cyan-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/admin/books.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-books text-lg"></i>
+                    </div>
+                    <span>จัดการหนังสือ</span>
+                </a>
+
+                <a href="/admin/system.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-cogs text-lg"></i>
+                    </div>
+                    <span>จัดการระบบ</span>
+                </a>
+
+                <a href="/admin/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+
+                <a href="/admin/er-diagram.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-project-diagram text-lg"></i>
+                    </div>
+                    <span>ER Diagram</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">การทำงานทั่วไป</h3>
+                </div>
+
+                <a href="/admin/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/admin/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4 flex-shrink-0">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-violet-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crown text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Admin</p>
+                    <p class="text-xs text-slate-500 user-role">ผู้ดูแลระบบ</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 h-screen overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-white/70 backdrop-blur-sm shadow-sm border-b border-slate-200/50">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">ER Diagram</h1>
+                        <p class="text-sm sm:text-base text-slate-600 mt-1">โครงสร้างฐานข้อมูลของระบบ</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="downloadDiagram()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-download mr-2"></i>ดาวน์โหลด
+                        </button>
+                        <button onclick="toggleFullscreen()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                            <i class="fas fa-expand mr-2"></i>เต็มจอ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-6 min-h-full">
+            <!-- ER Diagram Container -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-8 hover:shadow-xl transition-all duration-300">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-semibold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Entity Relationship Diagram</h2>
+                        <p class="text-sm text-slate-600 mt-1">โครงสร้างความสัมพันธ์ของตารางฐานข้อมูล</p>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm text-slate-500">
+                        <i class="fas fa-info-circle"></i>
+                        <span>สร้างจาก Models ในระบบ</span>
+                    </div>
+                </div>
+                
+                <!-- Diagram -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6" id="diagramContainer">
+                    <div class="mermaid" id="erDiagram">
+                        erDiagram
+                            EMPLOYEES {
+                                int EmployeeId PK
+                                string Username
+                                string PasswordHash
+                                string Role
+                                string FullName
+                                string Phone
+                                string Email
+                                string Status
+                                datetime CreatedDate
+                                datetime LastLogin
+                            }
+                            
+                            CUSTOMERS {
+                                int CustomerId PK
+                                string FullName
+                                string Phone
+                                string Address
+                                string IdCard
+                                string Email
+                                string Status
+                                datetime CreatedDate
+                                int TotalBorrowed
+                                decimal TotalFines
+                                string ProfileImageUrl
+                            }
+                            
+                            CATEGORIES {
+                                int CategoryId PK
+                                string CategoryName
+                                string Description
+                                string ColorCode
+                                string Status
+                            }
+                            
+                            BOOKS {
+                                int BookId PK
+                                string Title
+                                string Author
+                                int CategoryId FK
+                                string Isbn
+                                string Publisher
+                                int Volume
+                                string ShelfLocation
+                                decimal RentalPrice
+                                string Condition
+                                string Status
+                                string QrCode
+                                datetime CreatedDate
+                                string CoverImageUrl
+                                bytes CoverImageData
+                                string CoverImageMimeType
+                            }
+                            
+                            RENTALS {
+                                int RentalId PK
+                                int CustomerId FK
+                                int BookId FK
+                                datetime RentalDate
+                                datetime DueDate
+                                datetime ReturnDate
+                                int RentalDays
+                                decimal RentalFee
+                                decimal FineAmount
+                                decimal TotalAmount
+                                string Status
+                                int StaffId FK
+                                string Notes
+                            }
+                            
+                            FINES {
+                                int FineId PK
+                                int RentalId FK
+                                int CustomerId FK
+                                string FineReason
+                                int DaysLate
+                                decimal FineRate
+                                decimal FineAmount
+                                decimal PaidAmount
+                                decimal Remaining
+                                string Status
+                                datetime CreatedDate
+                                datetime PaidDate
+                                int StaffId FK
+                            }
+                            
+                            SETTINGS {
+                                string SettingKey PK
+                                string SettingValue
+                                string Description
+                                int UpdatedBy
+                                datetime UpdatedDate
+                            }
+                            
+                            DAILYREPORTS {
+                                datetime ReportDate PK
+                                int TotalRentals
+                                int TotalReturns
+                                decimal TotalRevenue
+                                decimal TotalFines
+                                int NewCustomers
+                                int StaffId FK
+                                datetime CreatedTime
+                            }
+                            
+                            %% Relationships
+                            CATEGORIES ||--o{ BOOKS : "has"
+                            CUSTOMERS ||--o{ RENTALS : "makes"
+                            BOOKS ||--o{ RENTALS : "rented_in"
+                            EMPLOYEES ||--o{ RENTALS : "processed_by"
+                            RENTALS ||--o{ FINES : "generates"
+                            CUSTOMERS ||--o{ FINES : "owes"
+                            EMPLOYEES ||--o{ FINES : "processed_by"
+                            EMPLOYEES ||--o{ DAILYREPORTS : "creates"
+                    </div>
+                </div>
+                
+                <!-- Database Tables Summary -->
+                <div class="mt-8 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200">
+                    <h3 class="text-xl font-semibold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-4">
+                        <i class="fas fa-table mr-2 text-blue-500"></i>สรุปตาราง Database และหน้าที่การทำงาน
+                    </h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full bg-white rounded-lg shadow-sm border border-slate-200">
+                            <thead class="bg-gradient-to-r from-slate-100 to-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 border-b border-slate-300">🗂️ ชื่อตาราง</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700 border-b border-slate-300">📝 หน้าที่การทำงาน</th>
+                                    <th class="px-4 py-3 text-center text-sm font-semibold text-slate-700 border-b border-slate-300">🔢 จำนวนข้อมูล</th>
+                                    <th class="px-4 py-3 text-center text-sm font-semibold text-slate-700 border-b border-slate-300">🔗 ความสัมพันธ์</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Categories</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">เก็บหมวดหมู่ของหนังสือ เช่น แอ็กชั่น, โรแมนติก, ตลก, ดราม่า, แฟนตาซี, สยองขวัญ, กีฬา, ไซไฟ</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium" id="categoriesCount">8 หมวดหมู่</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">→ Books</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Books</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">เก็บข้อมูลหนังสือการ์ตูน ชื่อเรื่อง, ผู้แต่ง, เล่มที่, ราคาเช่า, สถานะ, ตำแหน่งชั้นวาง</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium" id="booksCount">38 เล่ม</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">Categories ←, → Rentals</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Customers</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">เก็บข้อมูลลูกค้า ชื่อ-สกุล, เบอร์โทร, ที่อยู่, ประวัติการยืม, ค่าปรับสะสม</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-medium" id="customersCount">15 คน</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">→ Rentals, Fines</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Employees</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">เก็บข้อมูลพนักงาน ชื่อผู้ใช้, รหัสผ่าน, บทบาท (Admin/Staff), ข้อมูลส่วนตัว</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full font-medium" id="employeesCount">2 คน</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">→ Rentals, Fines, Reports</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Rentals</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">บันทึกการเช่าหนังสือ วันที่เช่า, วันครบกำหนด, วันที่คืน, ค่าเช่า, ค่าปรับ</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium" id="rentalsCount">27 รายการ</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">Customers ←, Books ←, Employees ←, → Fines</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Fines</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">เก็บรายละเอียดค่าปรับ สาเหตุ, จำนวนวันที่เกิน, อัตราค่าปรับ, สถานะการจ่าย</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium" id="finesCount">11 รายการ</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">Rentals ←, Customers ←, Employees ←</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">Settings</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">ตั้งค่าระบบ จำนวนวันเช่า, ค่าปรับต่อวัน, จำนวนหนังสือสูงสุดที่ยืมได้</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full font-medium" id="settingsCount">3 การตั้งค่า</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">-</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-3 font-medium text-slate-900">DailyReports</td>
+                                    <td class="px-4 py-3 text-sm text-slate-700">รายงานสรุปประจำวัน จำนวนการเช่า, การคืน, รายได้, ค่าปรับ, ลูกค้าใหม่</td>
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full font-medium" id="dailyReportsCount">7 วัน</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-sm">Employees ←</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Data Flow and Relationships -->
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-4">
+                            <i class="fas fa-arrows-alt mr-2 text-blue-500"></i>การไหลของข้อมูล (Data Flow)
+                        </h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span class="text-slate-700"><strong>Customer</strong> → <strong>Rental</strong> ← <strong>Book</strong></span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-slate-700"><strong>Rental</strong> → <strong>Fine</strong> (หากคืนช้า)</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                <span class="text-slate-700"><strong>Employee</strong> → <strong>DailyReport</strong></span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                                <span class="text-slate-700"><strong>Category</strong> → <strong>Book</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-slate-800 mb-4">
+                            <i class="fas fa-chart-bar mr-2 text-green-500"></i>สถิติข้อมูลปัจจุบัน
+                        </h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="bg-slate-50 rounded-lg p-3 text-center">
+                                <div class="text-xl font-bold text-blue-600" id="statsTotalBooks">38</div>
+                                <div class="text-slate-600">หนังสือทั้งหมด</div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3 text-center">
+                                <div class="text-xl font-bold text-purple-600" id="statsTotalCustomers">15</div>
+                                <div class="text-slate-600">ลูกค้า</div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3 text-center">
+                                <div class="text-xl font-bold text-yellow-600" id="statsActiveRentals">7</div>
+                                <div class="text-slate-600">การเช่าปัจจุบัน</div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3 text-center">
+                                <div class="text-xl font-bold text-red-600" id="statsUnpaidFines">11</div>
+                                <div class="text-slate-600">ค่าปรับคงค้าง</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-800 mb-2">
+                            <i class="fas fa-key mr-2 text-yellow-500"></i>คำอธิบายสัญลักษณ์
+                        </h3>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li><strong>PK</strong> = Primary Key (คีย์หลัก)</li>
+                            <li><strong>FK</strong> = Foreign Key (คีย์ต่างประเทศ)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-800 mb-2">
+                            <i class="fas fa-link mr-2 text-blue-500"></i>ความสัมพันธ์
+                        </h3>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li><strong>||--o{</strong> = One to Many</li>
+                            <li><strong>||--||</strong> = One to One</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-800 mb-2">
+                            <i class="fas fa-database mr-2 text-green-500"></i>ข้อมูลสถิติ
+                        </h3>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>จำนวนตาราง: <strong>8 ตาราง</strong></li>
+                            <li>ความสัมพันธ์: <strong>8 ความสัมพันธ์</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            er: {
+                diagramPadding: 20,
+                layoutDirection: 'TB',
+                minEntityWidth: 100,
+                minEntityHeight: 75,
+                entityPadding: 15,
+                stroke: '#333333',
+                fill: '#ECECFF',
+                fontSize: 12
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply authentication check
+            auth.requireRole(['Admin']);
+            
+            // Show loading while diagram renders
+            document.getElementById('loading').classList.remove('hidden');
+            
+            // Load database statistics
+            loadDatabaseStats();
+            
+            // Hide loading after a short delay to allow Mermaid to render
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 2000);
+        });
+
+        async function loadDatabaseStats() {
+            try {
+                const response = await api.get('/dashboard/database-stats');
+                if (response.data) {
+                    const stats = response;
+                    updateDatabaseStats(stats);
+                } else {
+                    console.warn('Failed to load database stats:', response.message);
+                }
+            } catch (error) {
+                console.error('Error loading database stats:', error);
+                // Keep default values if API fails
+            }
+        }
+
+        function updateDatabaseStats(stats) {
+            // Update table counts
+            document.getElementById('categoriesCount').textContent = `${stats.tables.categories.total} หมวดหมู่`;
+            document.getElementById('booksCount').textContent = `${stats.tables.books.total} เล่ม`;
+            document.getElementById('customersCount').textContent = `${stats.tables.customers.total} คน`;
+            document.getElementById('employeesCount').textContent = `${stats.tables.employees.total} คน`;
+            document.getElementById('rentalsCount').textContent = `${stats.tables.rentals.total} รายการ`;
+            document.getElementById('finesCount').textContent = `${stats.tables.fines.total} รายการ`;
+            document.getElementById('settingsCount').textContent = `${stats.tables.settings.total} การตั้งค่า`;
+            document.getElementById('dailyReportsCount').textContent = `${stats.tables.dailyReports.total} วัน`;
+
+            // Update summary stats
+            document.getElementById('statsTotalBooks').textContent = stats.summary.totalBooks;
+            document.getElementById('statsTotalCustomers').textContent = stats.summary.totalCustomers;
+            document.getElementById('statsActiveRentals').textContent = stats.summary.activeRentals;
+            document.getElementById('statsUnpaidFines').textContent = stats.summary.unpaidFines;
+        }
+
+        function downloadDiagram() {
+            // Get the rendered SVG
+            const svg = document.querySelector('#erDiagram svg');
+            if (!svg) {
+                alert('ไม่สามารถดาวน์โหลดได้ในขณะนี้');
+                return;
+            }
+            
+            // Create a blob and download
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const blob = new Blob([svgData], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'comic-rental-er-diagram.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('diagramContainer');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.log('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Update user info
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = auth.getCurrentUser();
+            if (user) {
+                document.querySelector('.user-name').textContent = user.fullName || user.username;
+                document.querySelector('.user-role').textContent = user.role === 'Admin' ? 'ผู้ดูแลระบบ' : 'พนักงาน';
+            }
+        });
+    </script>
+</body>
+</html>

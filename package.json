@@ -1,0 +1,16 @@
+{
+  "name": "rent-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "live-server --port=3000 --open=/index.html",
+    "start": "live-server --port=3000",
+    "api": "cd ComicRental && dotnet run",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "live-server": "^1.2.2"
+  }
+}

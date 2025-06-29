@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานและสถิติ - ระบบเช่ายืมหนังสือการ์ตูน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 overflow-hidden flex">
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden no-print">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                <span class="text-gray-700">กำลังโหลดรายงาน...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Desktop Sidebar -->
+    <div class="h-screen w-72 bg-white/95 backdrop-blur-sm shadow-2xl border-r border-slate-200/50 lg:block hidden no-print" id="sidebar">
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <!-- Staff Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูพนักงาน</h3>
+                </div>
+                
+                <a href="/staff/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-line text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/staff/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/staff/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-file-chart-line text-lg"></i>
+                    </div>
+                    <span>รายงานรายวัน</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เครื่องมือ</h3>
+                </div>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Staff</p>
+                    <p class="text-xs text-slate-500 user-role">พนักงาน</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="lg:hidden fixed inset-0 z-20 bg-black bg-opacity-50 hidden no-print" id="sidebarOverlay"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div class="lg:hidden fixed inset-y-0 left-0 z-30 w-72 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out no-print" id="mobileSidebar">
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <!-- Staff Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูพนักงาน</h3>
+                </div>
+                
+                <a href="/staff/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-line text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/staff/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/staff/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-file-chart-line text-lg"></i>
+                    </div>
+                    <span>รายงานรายวัน</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เครื่องมือ</h3>
+                </div>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Staff</p>
+                    <p class="text-xs text-slate-500 user-role">พนักงาน</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="lg:hidden no-print">
+        <button id="sidebarToggle" class="fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-md">
+            <i class="fas fa-bars text-gray-600"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 h-screen overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-slate-50 shadow-sm border-b border-slate-200 no-print">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">รายงานและสถิติ</h1>
+                        <p class="text-sm sm:text-base text-gray-600">รายงานการเงิน สถิติการใช้งาน และการวิเคราะห์</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <select id="reportPeriod" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="today">วันนี้</option>
+                            <option value="week">สัปดาห์นี้</option>
+                            <option value="month" selected>เดือนนี้</option>
+                            <option value="quarter">ไตรมาสนี้</option>
+                            <option value="year">ปีนี้</option>
+                        </select>
+                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-print mr-2"></i>พิมพ์
+                        </button>
+                        <div class="relative">
+                            <button onclick="toggleExportMenu()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                                <i class="fas fa-file-excel mr-2"></i>Export Excel
+                            </button>
+                            <div id="exportMenu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                <div class="py-2">
+                                    <button onclick="exportReport('revenue')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-chart-line mr-2"></i>รายงานรายได้
+                                    </button>
+                                    <button onclick="exportReport('rentals')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-exchange-alt mr-2"></i>รายงานการยืม-คืน
+                                    </button>
+                                    <button onclick="exportReport('overdue')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>รายงานค้างคืน
+                                    </button>
+                                    <button onclick="exportReport('customers')" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-users mr-2"></i>รายงานลูกค้า
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-6 bg-slate-50 min-h-full">
+            <!-- Report Header -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">รายงานสถิติและการเงิน</h2>
+                    <p class="text-lg text-gray-600" id="reportPeriodTitle">เดือนนี้</p>
+                    <p class="text-sm text-gray-500">ระบบเช่ายืมหนังสือการ์ตูน</p>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-baht-sign text-green-600 text-2xl"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-800" id="totalRevenue">฿0</p>
+                        <p class="text-sm text-gray-600">รายได้รวม</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-book text-blue-600 text-2xl"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-800" id="totalRentals">0</p>
+                        <p class="text-sm text-gray-600">จำนวนการยืม</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-users text-purple-600 text-2xl"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-800" id="activeCustomers">0</p>
+                        <p class="text-sm text-gray-600">ลูกค้าที่ใช้บริการ</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-gray-800" id="avgRentalValue">฿0</p>
+                        <p class="text-sm text-gray-600">ค่าเช่าเฉลี่ย</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Revenue Trend Chart -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">แนวโน้มรายได้</h3>
+                    <div class="relative h-64">
+                        <canvas id="revenueTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Performance Chart -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">ประสิทธิภาพหมวดหมู่</h3>
+                    <div class="relative h-64">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Customer Growth Chart -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">การเติบโตของลูกค้า</h3>
+                    <div class="relative h-64">
+                        <canvas id="customerGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Book Performance Chart -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">อัตราการใช้งานหนังสือ</h3>
+                    <div class="relative h-64">
+                        <canvas id="bookUtilizationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Top Books -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">หนังสือยอดนิยม</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="topBooksList" class="space-y-3">
+                            <!-- Dynamic content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Customers -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">ลูกค้า VIP</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="topCustomersList" class="space-y-3">
+                            <!-- Dynamic content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800">สรุปทางการเงิน</h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-3">รายได้</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>ค่าเช่าหนังสือ:</span>
+                                    <span class="font-medium" id="rentalIncome">฿0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>ค่าปรับ:</span>
+                                    <span class="font-medium" id="fineIncome">฿0</span>
+                                </div>
+                                <div class="flex justify-between font-semibold text-green-800 pt-2 border-t">
+                                    <span>รวม:</span>
+                                    <span id="totalIncome">฿0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-3">สถิติการใช้งาน</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>การยืมเสร็จสิ้น:</span>
+                                    <span class="font-medium" id="completedRentals">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>การยืมที่ยังไม่คืน:</span>
+                                    <span class="font-medium" id="pendingRentals">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>อัตราการคืนตรงเวลา:</span>
+                                    <span class="font-medium" id="onTimeRate">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-800 mb-3">ข้อมูลหนังสือ</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>หนังสือทั้งหมด:</span>
+                                    <span class="font-medium" id="totalBooks">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>หนังสือที่ถูกยืม:</span>
+                                    <span class="font-medium" id="rentedBooks">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>อัตราการใช้งาน:</span>
+                                    <span class="font-medium" id="utilizationRate">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Footer -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
+                <div class="border-t pt-4">
+                    <div class="flex justify-between items-center text-sm text-gray-600">
+                        <div>
+                            <p>รายงานจัดทำโดย: <span class="font-medium" id="reportAdmin">Staff</span></p>
+                            <p>จัดทำเมื่อ: <span class="font-medium" id="reportTime"></span></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-medium">ระบบเช่ายืมหนังสือการ์ตูน</p>
+                            <p>Comic Rental Management System</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let charts = {};
+        let currentPeriod = 'month';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Mobile sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                mobileSidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            }
+
+            sidebarToggle?.addEventListener('click', toggleSidebar);
+            sidebarOverlay?.addEventListener('click', toggleSidebar);
+
+            // Setup period change handler
+            document.getElementById('reportPeriod').addEventListener('change', function() {
+                currentPeriod = this.value;
+                updateReportPeriodTitle();
+                loadReportData();
+            });
+
+            // Set report generation time
+            const now = new Date();
+            document.getElementById('reportTime').textContent = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH');
+
+            // Load initial data
+            updateReportPeriodTitle();
+            await loadReportData();
+        });
+
+        function updateReportPeriodTitle() {
+            const titles = {
+                'today': 'วันนี้',
+                'week': 'สัปดาห์นี้',
+                'month': 'เดือนนี้',
+                'quarter': 'ไตรมาสนี้',
+                'year': 'ปีนี้'
+            };
+            document.getElementById('reportPeriodTitle').textContent = titles[currentPeriod];
+        }
+
+        async function loadReportData() {
+            try {
+                utils.showLoading();
+
+                // Load real data from API
+                const response = await api.get(`/dashboard/reports?period=${currentPeriod}`);
+                
+                // Check if we got a valid response
+                if (response && response.summary) {
+                    const reportData = response;
+
+                    // Update key metrics
+                    updateKeyMetrics(reportData.summary);
+
+                    // Update financial summary
+                    updateFinancialSummary(reportData.summary);
+
+                    // Update charts
+                    updateCharts(reportData);
+
+                    // Update top lists
+                    updateTopLists(reportData);
+                } else {
+                    throw new Error('Invalid report data structure');
+                }
+
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการโหลดรายงาน', 'error');
+                console.error('Error loading report data:', error);
+                
+                // Show empty state instead of sample data
+                showEmptyState();
+            }
+        }
+
+        function showEmptyState() {
+            // Clear all data displays
+            updateKeyMetrics({});
+            updateFinancialSummary({});
+            
+            // Clear charts
+            if (charts.revenueTrend) {
+                charts.revenueTrend.destroy();
+                charts.revenueTrend = null;
+            }
+            if (charts.category) {
+                charts.category.destroy();
+                charts.category = null;
+            }
+            if (charts.customerGrowth) {
+                charts.customerGrowth.destroy();
+                charts.customerGrowth = null;
+            }
+            if (charts.bookUtilization) {
+                charts.bookUtilization.destroy();
+                charts.bookUtilization = null;
+            }
+            
+            // Show empty messages in chart containers
+            document.getElementById('revenueTrendChart').parentElement.innerHTML = 
+                '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลรายได้</p></div>';
+            document.getElementById('categoryChart').parentElement.innerHTML = 
+                '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลหมวดหมู่</p></div>';
+            document.getElementById('customerGrowthChart').parentElement.innerHTML = 
+                '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลลูกค้า</p></div>';
+            document.getElementById('bookUtilizationChart').parentElement.innerHTML = 
+                '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลการใช้งาน</p></div>';
+            
+            // Clear top lists
+            document.getElementById('topBooksList').innerHTML = 
+                '<p class="text-gray-500 text-center py-4">ไม่มีข้อมูลหนังสือยอดนิยม</p>';
+            document.getElementById('topCustomersList').innerHTML = 
+                '<p class="text-gray-500 text-center py-4">ไม่มีข้อมูลลูกค้า VIP</p>';
+        }
+
+        function updateKeyMetrics(data) {
+            document.getElementById('totalRevenue').textContent = utils.formatCurrency(data.totalRevenue || data.revenue || 0);
+            document.getElementById('totalRentals').textContent = Math.round(data.totalRentals || data.rentals || 0);
+            document.getElementById('activeCustomers').textContent = Math.round(data.activeCustomers || 0);
+            document.getElementById('avgRentalValue').textContent = utils.formatCurrency(data.avgRentalValue || 0);
+        }
+
+        function updateFinancialSummary(data) {
+            document.getElementById('rentalIncome').textContent = utils.formatCurrency(data.rentalIncome || 0);
+            document.getElementById('fineIncome').textContent = utils.formatCurrency(data.fineIncome || 0);
+            document.getElementById('totalIncome').textContent = utils.formatCurrency(data.totalRevenue || data.revenue || 0);
+            document.getElementById('completedRentals').textContent = Math.round(data.completedRentals || 0);
+            document.getElementById('pendingRentals').textContent = data.pendingRentals || 0;
+            document.getElementById('onTimeRate').textContent = Math.round(data.onTimeRate || 0) + '%';
+            document.getElementById('totalBooks').textContent = data.totalBooks || 0;
+            document.getElementById('rentedBooks').textContent = data.rentedBooks || 0;
+            
+            const utilizationRate = data.utilizationRate || (data.totalBooks > 0 ? Math.round(data.rentedBooks / data.totalBooks * 100) : 0);
+            document.getElementById('utilizationRate').textContent = Math.round(utilizationRate) + '%';
+        }
+
+        function updateCharts(data) {
+            createRevenueTrendChart(data);
+            createCategoryChart(data);
+            createCustomerGrowthChart(data);
+            createBookUtilizationChart(data);
+        }
+
+        function createRevenueTrendChart(data) {
+            const ctx = document.getElementById('revenueTrendChart').getContext('2d');
+            
+            if (charts.revenueTrend) {
+                charts.revenueTrend.destroy();
+            }
+
+            // Use real data only
+            if (!data.dailyRevenue || data.dailyRevenue.length === 0) {
+                // Show empty chart message
+                ctx.canvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลรายได้</p></div>';
+                return;
+            }
+            
+            const labels = data.dailyRevenue.map(d => d.Date);
+            const revenueData = data.dailyRevenue.map(d => d.Revenue);
+
+            charts.revenueTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'รายได้ (บาท)',
+                        data: revenueData,
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '฿' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCategoryChart(data) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            if (charts.category) {
+                charts.category.destroy();
+            }
+
+            // Use real category data only
+            if (!data.categoryRevenue || data.categoryRevenue.length === 0) {
+                // Show empty chart message
+                ctx.canvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลหมวดหมู่</p></div>';
+                return;
+            }
+            
+            const categories = data.categoryRevenue.map(c => c.CategoryName);
+            const categoryData = data.categoryRevenue.map(c => c.Revenue);
+            const colors = data.categoryRevenue.map((_, index) => {
+                const defaultColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16'];
+                return defaultColors[index % defaultColors.length];
+            });
+
+            charts.category = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: categoryData,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCustomerGrowthChart(data) {
+            const ctx = document.getElementById('customerGrowthChart').getContext('2d');
+            
+            if (charts.customerGrowth) {
+                charts.customerGrowth.destroy();
+            }
+
+            // Use real customer growth data only
+            if (!data.customerGrowth || data.customerGrowth.length === 0) {
+                // Show empty chart message
+                ctx.canvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลลูกค้า</p></div>';
+                return;
+            }
+            
+            const months = data.customerGrowth.map(d => d.month);
+            const newCustomers = data.customerGrowth.map(d => d.newCustomers);
+            const totalCustomers = data.customerGrowth.map(d => d.totalCustomers);
+
+            charts.customerGrowth = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'ลูกค้าใหม่',
+                        data: newCustomers,
+                        backgroundColor: '#3B82F6',
+                        yAxisID: 'y'
+                    }, {
+                        label: 'ลูกค้าสะสม',
+                        data: totalCustomers,
+                        type: 'line',
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+        }
+
+        function createBookUtilizationChart(data) {
+            const ctx = document.getElementById('bookUtilizationChart').getContext('2d');
+            
+            if (charts.bookUtilization) {
+                charts.bookUtilization.destroy();
+            }
+
+            // Use real book utilization data only
+            if (!data.bookUtilization || data.bookUtilization.length === 0) {
+                // Show empty chart message
+                ctx.canvas.parentElement.innerHTML = '<div class="flex items-center justify-center h-64"><p class="text-gray-500">ไม่มีข้อมูลการใช้งาน</p></div>';
+                return;
+            }
+            
+            const utilizationData = data.bookUtilization;
+
+            charts.bookUtilization = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: utilizationData.map(item => item.label),
+                    datasets: [{
+                        data: utilizationData.map(item => item.value),
+                        backgroundColor: utilizationData.map(item => item.color),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTopLists(data) {
+            // Top Books - use real data only
+            const topBooksContainer = document.getElementById('topBooksList');
+            if (!data.topBooks || data.topBooks.length === 0) {
+                topBooksContainer.innerHTML = '<p class="text-gray-500 text-center py-4">ไม่มีข้อมูลหนังสือยอดนิยม</p>';
+                return;
+            }
+            
+            topBooksContainer.innerHTML = data.topBooks.map((book, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">${book.Title || book.title}</p>
+                            <p class="text-sm text-gray-600">ยืม ${book.Rentals || book.rentals} ครั้ง</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Top Customers - use real data only
+            const topCustomersContainer = document.getElementById('topCustomersList');
+            if (!data.topCustomers || data.topCustomers.length === 0) {
+                topCustomersContainer.innerHTML = '<p class="text-gray-500 text-center py-4">ไม่มีข้อมูลลูกค้า VIP</p>';
+                return;
+            }
+            
+            topCustomersContainer.innerHTML = data.topCustomers.map((customer, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-purple-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                            ${index + 1}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-800">${customer.Name || customer.name}</p>
+                            <p class="text-sm text-gray-600">ยืม ${customer.Rentals || customer.rentals} ครั้ง | ${utils.formatCurrency(customer.Revenue || customer.revenue)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Export Menu Functions
+        function toggleExportMenu() {
+            const menu = document.getElementById('exportMenu');
+            menu.classList.toggle('hidden');
+            
+            // Close menu when clicking outside
+            if (!menu.classList.contains('hidden')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeExportMenu);
+                }, 0);
+            }
+        }
+        
+        function closeExportMenu(e) {
+            const menu = document.getElementById('exportMenu');
+            const button = e.target.closest('button[onclick="toggleExportMenu()"]');
+            
+            if (!button && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+                document.removeEventListener('click', closeExportMenu);
+            }
+        }
+        
+        async function exportReport(type) {
+            document.getElementById('exportMenu').classList.add('hidden');
+            utils.showLoading();
+            
+            try {
+                const token = localStorage.getItem('token');
+                const API_BASE_URL = 'http://localhost:5081';
+                let url = `${API_BASE_URL}/api/reports/export/`;
+                let filename = '';
+                
+                // Get date range based on selected period
+                const period = document.getElementById('reportPeriod').value;
+                const { startDate, endDate } = getDateRange(period);
+                
+                switch(type) {
+                    case 'revenue':
+                        url += `revenue?startDate=${startDate}&endDate=${endDate}`;
+                        filename = `Revenue_Report_${formatDateForFile(startDate)}_${formatDateForFile(endDate)}.xlsx`;
+                        break;
+                    case 'rentals':
+                        url += 'rentals?status=all';
+                        filename = `Rentals_Report_${formatDateForFile(new Date())}.xlsx`;
+                        break;
+                    case 'overdue':
+                        url += 'overdue';
+                        filename = `Overdue_Report_${formatDateForFile(new Date())}.xlsx`;
+                        break;
+                    case 'customers':
+                        url += 'customers';
+                        filename = `Customers_Report_${formatDateForFile(new Date())}.xlsx`;
+                        break;
+                }
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to export report');
+                }
+                
+                // Download the file
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                document.body.removeChild(a);
+                
+                utils.hideLoading();
+                utils.showToast('Export สำเร็จ', 'success');
+                
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการ Export', 'error');
+                console.error('Export error:', error);
+            }
+        }
+        
+        function getDateRange(period) {
+            const now = new Date();
+            let startDate, endDate;
+            
+            switch(period) {
+                case 'today':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                    break;
+                case 'week':
+                    const dayOfWeek = now.getDay();
+                    const diff = now.getDate() - dayOfWeek;
+                    startDate = new Date(now.setDate(diff));
+                    endDate = new Date(now.setDate(diff + 7));
+                    break;
+                case 'month':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                    endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+                    break;
+                case 'quarter':
+                    const quarter = Math.floor(now.getMonth() / 3);
+                    startDate = new Date(now.getFullYear(), quarter * 3, 1);
+                    endDate = new Date(now.getFullYear(), quarter * 3 + 3, 1);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getFullYear(), 0, 1);
+                    endDate = new Date(now.getFullYear() + 1, 0, 1);
+                    break;
+            }
+            
+            return {
+                startDate: startDate.toISOString().split('T')[0],
+                endDate: endDate.toISOString().split('T')[0]
+            };
+        }
+        
+        function formatDateForFile(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
+    </script>
+</body>
+</html>

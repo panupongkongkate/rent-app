@@ -1,0 +1,136 @@
+สร้างระบบเช่ายืมหนังสือการ์ตูนสำหรับใช้ภายในร้าน (Internal System) โดยใช้ HTML/CSS/JavaScript + Tailwind CSS CDN + C# Web API + SQLite
+
+## Frontend เทคโนโลยี:
+- HTML5, CSS3, JavaScript (Vanilla JS)
+- Tailwind CSS CDN
+- Font Awesome CDN สำหรับ Icons
+- Chart.js CDN สำหรับ Dashboard
+
+## Backend เทคโนโลยี:
+- C# .NET 8 Web API
+- Entity Framework Core
+- SQLite Database
+- JWT Authentication
+- Swagger/OpenAPI
+- CORS enabled
+- AutoMapper
+- BCrypt for password hashing
+
+## C# Web API Commands:
+```bash
+# สร้างโปรเจค
+dotnet new webapi -n ComicRental
+cd ComicRental
+
+# ติดตั้ง packages
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+dotnet add package System.IdentityModel.Tokens.Jwt
+dotnet add package Swashbuckle.AspNetCore
+dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
+dotnet add package BCrypt.Net-Next
+
+# รันแอป
+dotnet run
+```
+
+## API Endpoints:
+Base URL: http://localhost:5000/api
+
+Endpoints:
+- GET /api/health (Health Check)
+- POST /api/auth/login (Authentication)
+- GET /api/books (Get Books with pagination)
+- GET /api/books/search?query=XXX (Search Books)
+- POST /api/books (Create Book)
+- GET /api/customers (Get Customers)
+- GET /api/customers/search?query=XXX (Search Customers)
+- POST /api/customers (Create Customer)
+- GET /api/rentals (Get Rentals)
+- POST /api/rentals/borrow (Borrow Book)
+- POST /api/rentals/return (Return Book)
+- GET /api/categories (Get Categories)
+- GET /api/settings (Get Settings)
+- GET /api/dashboard/stats (Dashboard Statistics)
+
+## Frontend โครงสร้างระบบ (10 หน้า):
+
+### หน้าทั่วไป (2 หน้า):
+1. **หน้า Login** - ฟอร์มล็อกอิน username/password, redirect ตาม role
+2. **หน้าค้นหาหนังสือ** - ค้นหาด้วยชื่อ/ผู้แต่ง/ISBN, กรองตามหมวดหมู่/สถานะ
+
+### หน้า Staff (4 หน้า):
+3. **Staff Dashboard** - รายการลูกค้ายืม/คืนวันนี้, แจ้งเตือนค้างคืน, สถิติรายวัน
+4. **จัดการการยืม-คืน** - ค้นหาลูกค้า, เลือกหนังสือ, ยืม/คืน, คำนวณค่าปรับ
+5. **จัดการลูกค้า** - เพิ่ม/แก้ไขลูกค้า, ดูประวัติการยืม, ค้นหาลูกค้า
+6. **รายงานรายวัน** - สรุปการยืม-คืน, ค่าปรับ, หนังสือค้างคืน
+
+### หน้า Admin (4 หน้า):
+7. **Admin Dashboard** - สถิติครบถ้วน, กราฟ Chart.js, ภาพรวมระบบ
+8. **จัดการหนังสือ** - เพิ่ม/แก้ไข/ลบหนังสือ, จัดการหมวดหมู่
+9. **จัดการระบบและพนักงาน** - จัดการลูกค้า, Staff, ตั้งค่าระบบ
+10. **รายงานและสถิติ** - รายงานการเงิน, สถิติการยืม, กราฟแท่ง/วงกลม
+
+## Database Schema (8 Tables):
+1. **Employees** - employee_id, username, password_hash, role, full_name, phone, email, status, created_date, last_login
+2. **Customers** - customer_id, full_name, phone, address, id_card, email, status, created_date, total_borrowed, total_fines
+3. **Categories** - category_id, category_name, description, color_code, status
+4. **Books** - book_id, title, author, category_id, isbn, publisher, volume, shelf_location, rental_price, condition, status, qr_code, created_date, cover_image_url
+5. **Rentals** - rental_id, customer_id, book_id, rental_date, due_date, return_date, rental_days, rental_fee, fine_amount, total_amount, status, staff_id, notes
+6. **Fines** - fine_id, rental_id, customer_id, fine_reason, days_late, fine_rate, fine_amount, paid_amount, remaining, status, created_date, paid_date, staff_id
+7. **Settings** - setting_key, setting_value, description, updated_by, updated_date
+8. **DailyReports** - report_date, total_rentals, total_returns, total_revenue, total_fines, new_customers, staff_id, created_time
+
+## ข้อมูล Login ทดสอบ:
+- Admin: username="admin01", password="admin123"
+- Staff: username="staff01", password="staff123"
+
+## Features หลัก:
+1. **Authentication & Authorization** - JWT tokens, Role-based access, session management
+2. **Real-time Dashboard** - สถิติ, กราฟ Chart.js, แจ้งเตือน
+3. **Book Management** - CRUD หนังสือ, ค้นหา, pagination
+4. **Customer Management** - CRUD ลูกค้า, ประวัติการยืม
+5. **Rental System** - ยืม/คืนหนังสือ, คำนวณค่าปรับอัตโนมัติ
+6. **Reporting** - รายงานรายวัน, สถิติ
+7. **Responsive Design** - ใช้งานได้ทั้งเดสก์ท็อปและแท็บเล็ต
+8. **Error Handling** - จัดการ error และแจ้งเตือนผู้ใช้
+
+## UI/UX Requirements:
+- ใช้ Tailwind CSS สีเขียว (#4CAF50) เป็น primary color
+- Responsive design รองรับ desktop และ tablet
+- Loading spinner และ skeleton loading
+- Toast notifications สำหรับ success/error
+- Confirm dialogs สำหรับการลบข้อมูล
+- Modern card-based layout
+- Sidebar navigation
+- Icons จาก Font Awesome
+
+## สิทธิ์การใช้งาน:
+**STAFF สามารถ:** ยืม-คืนหนังสือ, จัดการลูกค้าพื้นฐาน, ดูรายงานรายวัน
+**ADMIN สามารถ:** ทุกอย่างที่ Staff ทำได้ + จัดการหนังสือ + ตั้งค่าระบบ + รายงานแบบละเอียด
+
+สร้างระบบทั้งหมดให้ทำงานได้เลย โดยเริ่มจาก Backend C# Web API ก่อน จากนั้น Frontend HTML/JavaScript
+
+## ⚠️ IMPORTANT: เริ่มสร้างไฟล์เลย ไม่ต้องแสดง checklist
+
+เริ่มสร้างไฟล์ทันที ตามลำดับนี้:
+
+**Backend (C# Web API):**
+1. สร้าง ComicRental.csproj - Project file
+2. สร้าง Models/Entities - All entity classes
+3. สร้าง Data/ComicRentalContext.cs - DbContext
+4. สร้าง Controllers - All API controllers
+5. สร้าง Program.cs - Main application setup
+
+**Frontend (HTML/CSS/JS):**
+6. สร้าง js/api.js - API helper functions
+7. สร้าง js/auth.js - Authentication functions
+8. สร้าง index.html - Login page
+9. สร้าง staff/dashboard.html - Staff dashboard
+10. สร้าง admin/dashboard.html - Admin dashboard
+
+ให้สร้างไฟล์จริงๆ พร้อมโค้ดที่ทำงานได้ ไม่ต้องอธิบายแผนการ
+
+เริ่มสร้างระบบทั้งหมดให้ทำงานได้เลย

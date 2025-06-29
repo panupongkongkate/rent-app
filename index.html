@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - Comic Rental</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            900: '#164e63'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen">
+    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div class="w-full max-w-md">
+            <!-- Main Card -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8 space-y-8">
+                <!-- Header -->
+                <div class="text-center space-y-4">
+                    <div class="relative mx-auto w-20 h-20">
+                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl rotate-6 opacity-20"></div>
+                        <div class="relative bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-book-open text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                            Comic Rental
+                        </h1>
+                        <p class="text-slate-600 text-sm">ระบบจัดการร้านเช่าหนังสือการ์ตูน</p>
+                    </div>
+                </div>
+
+                <!-- Quick Login Section -->
+                <div class="space-y-4">
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">เข้าสู่ระบบด่วน</h3>
+                    </div>
+                    
+                    <!-- Admin Quick Login -->
+                    <button onclick="quickLogin('admin01', 'admin123')" 
+                            class="group w-full relative overflow-hidden bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white rounded-2xl p-4 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
+                        <div class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                        <div class="relative flex items-center justify-center space-x-3">
+                            <i class="fas fa-crown text-xl"></i>
+                            <div class="text-left">
+                                <div class="font-semibold">เข้าสู่ระบบแอดมิน</div>
+                                <div class="text-sm opacity-90">admin01 / admin123</div>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Staff Quick Login -->
+                    <button onclick="quickLogin('staff01', 'staff123')" 
+                            class="group w-full relative overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl p-4 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg">
+                        <div class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                        <div class="relative flex items-center justify-center space-x-3">
+                            <i class="fas fa-user text-xl"></i>
+                            <div class="text-left">
+                                <div class="font-semibold">เข้าสู่ระบบพนักงาน</div>
+                                <div class="text-sm opacity-90">staff01 / staff123</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-slate-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-slate-500">หรือ</span>
+                    </div>
+                </div>
+
+                <!-- Manual Login Form -->
+                <form id="loginForm" class="space-y-6">
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label for="username" class="block text-sm font-medium text-slate-700">ชื่อผู้ใช้</label>
+                            <div class="relative">
+                                <input type="text" id="username" name="username" required
+                                       class="w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-400"
+                                       placeholder="ใส่ชื่อผู้ใช้">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-slate-400"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="password" class="block text-sm font-medium text-slate-700">รหัสผ่าน</label>
+                            <div class="relative">
+                                <input type="password" id="password" name="password" required
+                                       class="w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 placeholder:text-slate-400"
+                                       placeholder="ใส่รหัสผ่าน">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-slate-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-900 hover:to-slate-800 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        เข้าสู่ระบบ
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-8">
+                <p class="text-sm text-slate-500">© 2024 Comic Rental System</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-2 border-slate-200 border-t-cyan-500"></div>
+                <span class="text-slate-700 font-medium">กำลังเข้าสู่ระบบ...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg border border-red-600">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span id="toastMessage">ข้อความแจ้งเตือน</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://localhost:5081/js/api.js"></script>
+    <script src="http://localhost:5081/js/auth.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            await auth.login(username, password);
+        });
+
+        async function quickLogin(username, password) {
+            await auth.login(username, password);
+        }
+
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            const toastDiv = toast.querySelector('div');
+            if (type === 'success') {
+                toastDiv.className = 'bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg border border-emerald-600';
+            } else {
+                toastDiv.className = 'bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg border border-red-600';
+            }
+            
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+    </script>
+    
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

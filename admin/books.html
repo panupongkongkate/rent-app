@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการหนังสือ - ระบบเช่ายืมหนังสือการ์ตูน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 overflow-hidden flex">
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                <span class="text-gray-700">กำลังดำเนินการ...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Desktop Sidebar -->
+    <div class="h-screen w-72 bg-white/95 backdrop-blur-sm shadow-2xl border-r border-slate-200/50 lg:block hidden"
+        id="sidebar">
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl rotate-3 opacity-20">
+                    </div>
+                    <div
+                        class="relative bg-gradient-to-r from-cyan-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1
+                        class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                        Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <!-- Admin Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูผู้ดูแลระบบ</h3>
+                </div>
+
+                <a href="/admin/dashboard.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-cyan-500 bg-cyan-50 rounded-lg group-hover:bg-cyan-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/admin/books.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-books text-lg"></i>
+                    </div>
+                    <span>จัดการหนังสือ</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+
+                <a href="/admin/system.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-cogs text-lg"></i>
+                    </div>
+                    <span>จัดการระบบ</span>
+                </a>
+
+                <a href="/admin/reports.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+
+                <a href="/admin/er-diagram.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-indigo-500 bg-indigo-50 rounded-lg group-hover:bg-indigo-100">
+                        <i class="fas fa-project-diagram text-lg"></i>
+                    </div>
+                    <span>ER Diagram</span>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">การทำงานทั่วไป</h3>
+                </div>
+
+                <a href="/admin/rental.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/staff/customers.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/search.html"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div
+                        class="bg-gradient-to-r from-violet-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crown text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white">
+                    </div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Admin</p>
+                    <p class="text-xs text-slate-500 user-role">ผู้ดูแลระบบ</p>
+                </div>
+            </div>
+
+            <button onclick="auth.logout()"
+                class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="lg:hidden fixed inset-0 z-20 bg-black bg-opacity-50 hidden" id="sidebarOverlay"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div class="lg:hidden fixed inset-y-0 left-0 z-30 w-72 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out" id="mobileSidebar">
+        <!-- Copy of desktop sidebar content for mobile -->
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-cyan-500 to-blue-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <!-- Admin Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูผู้ดูแลระบบ</h3>
+                </div>
+                
+                <a href="/admin/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-cyan-500 bg-cyan-50 rounded-lg group-hover:bg-cyan-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/admin/books.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-books text-lg"></i>
+                    </div>
+                    <span>จัดการหนังสือ</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+
+                <a href="/admin/system.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-cogs text-lg"></i>
+                    </div>
+                    <span>จัดการระบบ</span>
+                </a>
+
+                <a href="/admin/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+
+                <a href="/admin/er-diagram.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-indigo-500 bg-indigo-50 rounded-lg group-hover:bg-indigo-100">
+                        <i class="fas fa-project-diagram text-lg"></i>
+                    </div>
+                    <span>ER Diagram</span>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">การทำงานทั่วไป</h3>
+                </div>
+
+                <a href="/admin/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-blue-500 bg-blue-50 rounded-lg group-hover:bg-blue-100">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-violet-500 to-purple-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-crown text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Admin</p>
+                    <p class="text-xs text-slate-500 user-role">ผู้ดูแลระบบ</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="lg:hidden">
+        <button id="sidebarToggle" class="fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-md">
+            <i class="fas fa-bars text-gray-600"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 h-screen overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-slate-50 shadow-sm border-b border-slate-200">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">จัดการหนังสือ</h1>
+                        <p class="text-sm sm:text-base text-gray-600">เพิ่ม แก้ไข และจัดการหนังสือการ์ตูน</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="showCategoryModal()"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                            <i class="fas fa-tags mr-2"></i>หมวดหมู่
+                        </button>
+                        <button onclick="showAddBookModal()"
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
+                            <i class="fas fa-plus mr-2"></i>เพิ่มหนังสือ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-6 bg-slate-50 min-h-full">
+            <!-- Search and Filters -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ค้นหาหนังสือ</label>
+                        <div class="relative">
+                            <input type="text" id="searchBooks" placeholder="ค้นหาด้วยชื่อ, ผู้แต่ง, ISBN"
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">หมวดหมู่</label>
+                        <select id="categoryFilter"
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="">ทั้งหมด</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">สถานะ</label>
+                        <select id="statusFilter"
+                            class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="">ทั้งหมด</option>
+                            <option value="Available">ว่าง</option>
+                            <option value="Rented">ถูกยืม</option>
+                            <option value="Maintenance">ซ่อมบำรุง</option>
+                            <option value="Lost">สูญหาย</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Grid -->
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800">รายการหนังสือ</h3>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600" id="bookCount">ทั้งหมด 0 เล่ม</span>
+                        <div class="flex border border-gray-300 rounded-lg">
+                            <button id="gridView" onclick="setView('grid')"
+                                class="px-3 py-2 text-sm bg-green-500 text-white rounded-l-lg">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button id="listView" onclick="setView('list')"
+                                class="px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-r-lg">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid View -->
+                <div id="booksGrid" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+
+                <!-- List View -->
+                <div id="booksList" class="hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        หนังสือ</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        ข้อมูล</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        สถานะ</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        การดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booksTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- Dynamic content will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="booksPagination" class="mt-6 bg-white rounded-xl shadow-lg border border-slate-200 p-4">
+                    <!-- Pagination content will be inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Book Modal -->
+    <div id="bookModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="bookModalTitle" class="text-lg font-semibold text-gray-800">เพิ่มหนังสือใหม่</h3>
+                <button onclick="closeBookModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="bookForm" class="space-y-4">
+                <input type="hidden" id="bookId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อหนังสือ *</label>
+                        <input type="text" id="title" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ผู้แต่ง *</label>
+                        <input type="text" id="author" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่ *</label>
+                        <select id="categoryId" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="">เลือกหมวดหมู่</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
+                        <input type="text" id="isbn"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">สำนักพิมพ์</label>
+                        <input type="text" id="publisher"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">เล่มที่</label>
+                        <input type="number" id="volume" min="1"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ที่เก็บ</label>
+                        <input type="text" id="shelfLocation"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ค่าเช่า (บาท) *</label>
+                        <input type="number" id="rentalPrice" min="0" step="0.01" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">สภาพหนังสือ</label>
+                        <select id="condition"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="New">ใหม่</option>
+                            <option value="Good">ดี</option>
+                            <option value="Fair">พอใช้</option>
+                            <option value="Poor">แย่</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">สถานะ</label>
+                        <select id="status"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="Available">ว่าง</option>
+                            <option value="Rented">ถูกยืม</option>
+                            <option value="Maintenance">ซ่อมบำรุง</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div class="border-t pt-4">
+                    <h4 class="text-md font-medium text-gray-800 mb-3">รูปปกหนังสือ</h4>
+
+                    <!-- Current Image Preview -->
+                    <div id="currentBookCover" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">รูปปัจจุบัน</label>
+                        <div class="flex items-center space-x-4">
+                            <img id="currentCoverPreview" src="" alt="Current cover"
+                                class="w-20 h-24 object-cover rounded border">
+                            <button type="button" onclick="deleteCurrentBookImage()"
+                                class="text-red-600 hover:text-red-800 text-sm">
+                                <i class="fas fa-trash mr-1"></i>ลบรูปปัจจุบัน
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- New Image Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">อัพโหลดรูปใหม่</label>
+                        <input type="file" id="bookImageInput" accept="image/*"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                            onchange="previewBookImage(this)">
+                        <p class="text-xs text-gray-500 mt-1">รองรับ JPG, PNG, GIF ขนาดไม่เกิน 5MB</p>
+                    </div>
+
+                    <!-- New Image Preview -->
+                    <div id="newImagePreview" class="mt-3 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ตัวอย่างรูปใหม่</label>
+                        <div class="flex items-center space-x-4">
+                            <img id="newCoverPreview" src="" alt="New cover preview"
+                                class="w-20 h-24 object-cover rounded border">
+                            <button type="button" onclick="clearImagePreview()"
+                                class="text-gray-600 hover:text-gray-800 text-sm">
+                                <i class="fas fa-times mr-1"></i>ยกเลิก
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Alternative URL Input -->
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">หรือใส่ URL รูปปก</label>
+                        <input type="url" id="coverImageUrl"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="https://example.com/image.jpg">
+                        <p class="text-xs text-gray-500 mt-1">สำหรับรูปภาพจากอินเทอร์เน็ต</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeBookModal()"
+                        class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        ยกเลิก
+                    </button>
+                    <button type="button" onclick="saveBook()"
+                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Management Modal -->
+    <div id="categoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">จัดการหมวดหมู่</h3>
+                <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Add Category Form -->
+            <form id="categoryForm" class="mb-6">
+                <div class="flex space-x-3">
+                    <input type="text" id="categoryName" placeholder="ชื่อหมวดหมู่" required
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        เพิ่ม
+                    </button>
+                </div>
+            </form>
+
+            <!-- Categories List -->
+            <div class="space-y-2 max-h-64 overflow-y-auto" id="categoriesList">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <h3 id="successMessage" class="text-lg font-medium text-gray-900 mb-4">
+                    บันทึกข้อมูลสำเร็จ
+                </h3>
+                <button onclick="closeSuccessModal()" 
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    ตกลง
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/pagination.js"></script>
+    <script>
+        let books = [];
+        let categories = [];
+        let filteredBooks = [];
+        let currentView = 'grid';
+        let editingBookId = null;
+        
+        // Pagination variables
+        let currentPage = 1;
+        let pageSize = 10;
+        let totalPages = 1;
+        let totalItems = 0;
+        let booksPagination = null;
+
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Mobile sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                mobileSidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            }
+
+            sidebarToggle?.addEventListener('click', toggleSidebar);
+            sidebarOverlay?.addEventListener('click', toggleSidebar);
+
+            // Setup search and filter handlers
+            setupSearchAndFilters();
+
+            // Setup form handlers
+            setupFormHandlers();
+
+            // Load data
+            await loadCategories();
+            await loadBooks();
+        });
+
+        function setupSearchAndFilters() {
+            const searchInput = document.getElementById('searchBooks');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const statusFilter = document.getElementById('statusFilter');
+
+            searchInput.addEventListener('input', debounce(filterBooks, 300));
+            categoryFilter.addEventListener('change', filterBooks);
+            statusFilter.addEventListener('change', filterBooks);
+        }
+
+        function setupFormHandlers() {
+            document.getElementById('categoryForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                await addCategory();
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function loadCategories() {
+            try {
+                categories = await api.categories.getAll();
+                populateCategorySelects();
+                displayCategories();
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                utils.showToast('เกิดข้อผิดพลาดในการโหลดหมวดหมู่', 'error');
+            }
+        }
+
+        function populateCategorySelects() {
+            const categorySelects = ['categoryFilter', 'categoryId'];
+            categorySelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (selectId === 'categoryFilter') {
+                    select.innerHTML = '<option value="">ทั้งหมด</option>';
+                } else {
+                    select.innerHTML = '<option value="">เลือกหมวดหมู่</option>';
+                }
+
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.categoryId;
+                    option.textContent = category.categoryName;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function displayCategories() {
+            const container = document.getElementById('categoriesList');
+            container.innerHTML = categories.map(category => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 rounded-full mr-3" style="background-color: ${category.colorCode || '#6B7280'}"></div>
+                        <span class="font-medium">${category.categoryName}</span>
+                        <span class="ml-2 text-sm text-gray-500">(${category.bookCount || 0} เล่ม)</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="editCategory(${category.categoryId})" class="text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteCategory(${category.categoryId})" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadBooks(page = 1) {
+            try {
+                utils.showLoading();
+                currentPage = page;
+                
+                // Get filters
+                const searchTerm = document.getElementById('searchBooks').value.toLowerCase();
+                const categoryFilter = document.getElementById('categoryFilter').value;
+                const statusFilter = document.getElementById('statusFilter').value;
+                
+                // Build API parameters
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    pageSize: pageSize
+                });
+                
+                if (statusFilter) {
+                    params.append('status', statusFilter);
+                }
+                
+                const response = await api.get(`/books?${params.toString()}`);
+                
+                if (response.data) {
+                    books = response.data || [];
+                    totalItems = response.totalItems || 0;
+                    totalPages = response.totalPages || 1;
+                    
+                    // Client-side filtering for search and category (since API doesn't support all filters yet)
+                    filteredBooks = books.filter(book => {
+                        const matchesSearch = !searchTerm ||
+                            book.title.toLowerCase().includes(searchTerm) ||
+                            book.author.toLowerCase().includes(searchTerm) ||
+                            (book.isbn && book.isbn.includes(searchTerm));
+                        
+                        const matchesCategory = !categoryFilter || book.categoryId == categoryFilter;
+                        
+                        return matchesSearch && matchesCategory;
+                    });
+                    
+                    displayBooks();
+                    updateBookCount();
+                    updatePagination();
+                } else {
+                    throw new Error(response.message || 'Failed to load books');
+                }
+                
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                books = [];
+                filteredBooks = [];
+                totalItems = 0;
+                totalPages = 1;
+                displayBooks();
+                updatePagination();
+                utils.showToast('เกิดข้อผิดพลาดในการโหลดข้อมูลหนังสือ', 'error');
+                console.error('Error loading books:', error);
+            }
+        }
+
+        function filterBooks() {
+            // Reload books from page 1 when filters change
+            currentPage = 1;
+            loadBooks(1);
+        }
+
+        function updatePagination() {
+            if (!booksPagination) {
+                booksPagination = new Pagination('booksPagination', {
+                    currentPage: currentPage,
+                    totalPages: totalPages,
+                    totalItems: totalItems,
+                    pageSize: pageSize,
+                    onPageChange: (page) => {
+                        loadBooks(page);
+                    }
+                });
+            } else {
+                booksPagination.updatePagination(currentPage, totalPages, totalItems, pageSize);
+            }
+        }
+
+        // Keep the old filterBooks logic for when we have all data client-side
+        function filterBooksClientSide() {
+            const searchTerm = document.getElementById('searchBooks').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredBooks = books.filter(book => {
+                const matchesSearch = !searchTerm ||
+                    book.title.toLowerCase().includes(searchTerm) ||
+                    book.author.toLowerCase().includes(searchTerm) ||
+                    (book.isbn && book.isbn.includes(searchTerm));
+
+                const matchesCategory = !categoryFilter || book.categoryId == categoryFilter;
+                const matchesStatus = !statusFilter || book.status === statusFilter;
+
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            displayBooks();
+            updateBookCount();
+        }
+
+        function displayBooks() {
+            if (currentView === 'grid') {
+                displayBooksGrid();
+            } else {
+                displayBooksList();
+            }
+        }
+
+        function displayBooksGrid() {
+            const container = document.getElementById('booksGrid');
+
+            if (filteredBooks.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">ไม่พบหนังสือ</div>';
+                return;
+            }
+
+            container.innerHTML = filteredBooks.map(book => {
+                const category = categories.find(c => c.categoryId === book.categoryId);
+                const statusColor = {
+                    'Available': 'bg-green-100 text-green-800',
+                    'Rented': 'bg-yellow-100 text-yellow-800',
+                    'Maintenance': 'bg-red-100 text-red-800',
+                    'Lost': 'bg-gray-100 text-gray-800'
+                };
+                const statusText = {
+                    'Available': 'ว่าง',
+                    'Rented': 'ถูกยืม',
+                    'Maintenance': 'ซ่อมบำรุง',
+                    'Lost': 'สูญหาย'
+                };
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow duration-200">
+                        <div class="aspect-w-3 aspect-h-4 mb-3">
+                            <img src="${book.coverImageUrl || 'http://localhost:5081/placeholder-book.svg'}" 
+                                 alt="${book.title}" 
+                                 class="w-full h-32 object-cover rounded-lg" 
+                                 onerror="this.src='http://localhost:5081/placeholder-book.svg'">
+                        </div>
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-gray-800 text-sm leading-tight line-clamp-2">${book.title}</h4>
+                            <p class="text-xs text-gray-600">${book.author}</p>
+                            <p class="text-xs text-gray-500">${category?.categoryName || 'ไม่ระบุหมวด'}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-semibold text-green-600">${utils.formatCurrency(book.rentalPrice)}</span>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${statusColor[book.status] || 'bg-gray-100 text-gray-800'}">
+                                    ${statusText[book.status] || book.status}
+                                </span>
+                            </div>
+                            <div class="flex justify-end space-x-2 pt-2">
+                                <button onclick="editBook(${book.bookId})" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteBook(${book.bookId})" class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayBooksList() {
+            const tbody = document.getElementById('booksTableBody');
+
+            if (filteredBooks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                            ไม่พบหนังสือ
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredBooks.map(book => {
+                const category = categories.find(c => c.categoryId === book.categoryId);
+                const statusColor = {
+                    'Available': 'bg-green-100 text-green-800',
+                    'Rented': 'bg-yellow-100 text-yellow-800',
+                    'Maintenance': 'bg-red-100 text-red-800',
+                    'Lost': 'bg-gray-100 text-gray-800'
+                };
+                const statusText = {
+                    'Available': 'ว่าง',
+                    'Rented': 'ถูกยืม',
+                    'Maintenance': 'ซ่อมบำรุง',
+                    'Lost': 'สูญหาย'
+                };
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <img src="${book.coverImageUrl || 'http://localhost:5081/placeholder-book.svg'}" 
+                                     alt="${book.title}" class="w-12 h-16 object-cover rounded mr-4"
+                                     onerror="this.src='http://localhost:5081/placeholder-book.svg'">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">${book.title}</div>
+                                    <div class="text-sm text-gray-500">${book.author}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div>${category?.categoryName || 'ไม่ระบุหมวด'}</div>
+                            <div class="text-gray-500">ISBN: ${book.isbn || 'ไม่ระบุ'}</div>
+                            <div class="text-green-600 font-semibold">${utils.formatCurrency(book.rentalPrice)}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor[book.status] || 'bg-gray-100 text-gray-800'}">
+                                ${statusText[book.status] || book.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button onclick="editBook(${book.bookId})" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteBook(${book.bookId})" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateBookCount() {
+            document.getElementById('bookCount').textContent = `ทั้งหมด ${filteredBooks.length} เล่ม`;
+        }
+
+        function setView(view) {
+            currentView = view;
+            const gridView = document.getElementById('gridView');
+            const listView = document.getElementById('listView');
+            const booksGrid = document.getElementById('booksGrid');
+            const booksList = document.getElementById('booksList');
+
+            if (view === 'grid') {
+                gridView.className = 'px-3 py-2 text-sm bg-green-500 text-white rounded-l-lg';
+                listView.className = 'px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-r-lg';
+                booksGrid.classList.remove('hidden');
+                booksList.classList.add('hidden');
+            } else {
+                gridView.className = 'px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-l-lg';
+                listView.className = 'px-3 py-2 text-sm bg-green-500 text-white rounded-r-lg';
+                booksGrid.classList.add('hidden');
+                booksList.classList.remove('hidden');
+            }
+            displayBooks();
+        }
+
+        function showAddBookModal() {
+            showBookModal();
+        }
+
+
+        function closeBookModal() {
+            document.getElementById('bookModal').classList.add('hidden');
+            editingBookId = null;
+        }
+
+        async function saveBook() {
+            try {
+                utils.showLoading();
+
+                let imageUrl = document.getElementById('coverImageUrl').value;
+
+                // Check if user selected a new image file
+                const imageFile = document.getElementById('bookImageInput').files[0];
+
+                // Prepare book data
+                const formData = {
+                    title: document.getElementById('title').value,
+                    author: document.getElementById('author').value,
+                    categoryId: parseInt(document.getElementById('categoryId').value),
+                    isbn: document.getElementById('isbn').value,
+                    publisher: document.getElementById('publisher').value,
+                    volume: document.getElementById('volume').value ? parseInt(document.getElementById('volume').value) : null,
+                    shelfLocation: document.getElementById('shelfLocation').value,
+                    rentalPrice: parseFloat(document.getElementById('rentalPrice').value),
+                    condition: document.getElementById('condition').value,
+                    status: document.getElementById('status').value,
+                    coverImageUrl: imageUrl
+                };
+
+                // Add bookId when editing
+                if (editingBookId) {
+                    formData.bookId = parseInt(document.getElementById('bookId').value);
+                }
+
+
+                let bookId = editingBookId;
+
+                console.log('Saving book with data:', formData);
+
+                // Save book first
+                if (editingBookId) {
+                    // Check if current image should be deleted
+                    if (!document.getElementById('currentBookCover').classList.contains('hidden') &&
+                        document.getElementById('currentBookCover').style.display !== 'none' &&
+                        !imageUrl) {
+                        // User deleted current image
+                        await api.books.deleteImage(editingBookId);
+                        formData.coverImageUrl = null;
+                    }
+                    debugger
+                    await api.books.update(editingBookId, formData);
+                } else {
+                    const result = await api.books.create(formData);
+                    // Get the book ID from the created book
+                    bookId = result.bookId || result.id;
+                }
+
+                // Upload new image if selected
+                if (imageFile && bookId) {
+                    console.log('Uploading image for bookId:', bookId);
+                    const uploadResult = await api.books.uploadImage(bookId, imageFile);
+                    console.log('Upload result:', uploadResult);
+                    console.log('Image uploaded successfully to BLOB');
+                }
+                showSuccessModal(editingBookId ? 'แก้ไขหนังสือสำเร็จ' : 'เพิ่มหนังสือสำเร็จ');
+                closeBookModal();
+                await loadBooks();
+                utils.hideLoading();
+
+            } catch (error) {
+                debugger
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
+                console.error('Error saving book:', error);
+            }
+        }
+
+        async function deleteBook(bookId) {
+            if (!confirm('ยืนยันการลบหนังสือ?')) return;
+
+            try {
+                utils.showLoading();
+                await api.books.delete(bookId);
+                utils.showToast('ลบหนังสือสำเร็จ', 'success');
+                await loadBooks();
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการลบหนังสือ', 'error');
+                console.error('Error deleting book:', error);
+            }
+        }
+
+        function showCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.add('hidden');
+        }
+
+        async function addCategory() {
+            const categoryName = document.getElementById('categoryName').value.trim();
+            if (!categoryName) return;
+
+            try {
+                await api.categories.create({ categoryName });
+                utils.showToast('เพิ่มหมวดหมู่สำเร็จ', 'success');
+                document.getElementById('categoryName').value = '';
+                await loadCategories();
+            } catch (error) {
+                utils.showToast('เกิดข้อผิดพลาดในการเพิ่มหมวดหมู่', 'error');
+                console.error('Error adding category:', error);
+            }
+        }
+
+        async function deleteCategory(categoryId) {
+            if (!confirm('ยืนยันการลบหมวดหมู่? (หนังสือในหมวดนี้จะไม่มีหมวดหมู่)')) return;
+
+            try {
+                await api.categories.delete(categoryId);
+                utils.showToast('ลบหมวดหมู่สำเร็จ', 'success');
+                await loadCategories();
+                await loadBooks();
+            } catch (error) {
+                utils.showToast('เกิดข้อผิดพลาดในการลบหมวดหมู่', 'error');
+                console.error('Error deleting category:', error);
+            }
+        }
+
+
+        // Functions for book modal image handling
+        function previewBookImage(input) {
+            const file = input.files[0];
+            if (file) {
+                // Validate file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    utils.showToast('ขนาดไฟล์ต้องไม่เกิน 5MB', 'error');
+                    input.value = '';
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    utils.showToast('รองรับเฉพาะไฟล์ JPG, PNG, GIF เท่านั้น', 'error');
+                    input.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('newCoverPreview').src = e.target.result;
+                    document.getElementById('newImagePreview').classList.remove('hidden');
+                    // Clear URL input when file is selected
+                    document.getElementById('coverImageUrl').value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearImagePreview() {
+            document.getElementById('bookImageInput').value = '';
+            document.getElementById('newImagePreview').classList.add('hidden');
+        }
+
+        function deleteCurrentBookImage() {
+            if (!confirm('ยืนยันการลบรูปปัจจุบัน?')) return;
+
+            // Clear current image display
+            document.getElementById('currentBookCover').classList.add('hidden');
+            document.getElementById('coverImageUrl').value = '';
+        }
+
+        function showBookModal() {
+            editingBookId = null;
+            document.getElementById('bookModalTitle').textContent = 'เพิ่มหนังสือใหม่';
+            document.getElementById('bookForm').reset();
+            // Set default values
+            document.getElementById('condition').value = 'Good';
+            document.getElementById('status').value = 'Available';
+            // Reset image previews
+            document.getElementById('currentBookCover').classList.add('hidden');
+            document.getElementById('newImagePreview').classList.add('hidden');
+            document.getElementById('bookModal').classList.remove('hidden');
+        }
+
+        function editBook(bookId) {
+            editingBookId = bookId;
+            const book = books.find(b => b.bookId === bookId);
+
+            if (book) {
+                document.getElementById('bookModalTitle').textContent = 'แก้ไขหนังสือ';
+
+                // Populate form fields
+                document.getElementById('bookId').value = book.bookId;
+                document.getElementById('title').value = book.title;
+                document.getElementById('author').value = book.author;
+                document.getElementById('categoryId').value = book.categoryId;
+                document.getElementById('isbn').value = book.isbn || '';
+                document.getElementById('publisher').value = book.publisher || '';
+                document.getElementById('volume').value = book.volume || '';
+                document.getElementById('shelfLocation').value = book.shelfLocation || '';
+                document.getElementById('rentalPrice').value = book.rentalPrice;
+                document.getElementById('condition').value = book.condition;
+                document.getElementById('status').value = book.status;
+                document.getElementById('coverImageUrl').value = book.coverImageUrl || '';
+
+                // Show current image if exists
+                if (book.coverImageUrl) {
+                    document.getElementById('currentCoverPreview').src = book.coverImageUrl;
+                    document.getElementById('currentBookCover').classList.remove('hidden');
+                } else {
+                    document.getElementById('currentBookCover').classList.add('hidden');
+                }
+
+                // Clear new image preview
+                document.getElementById('newImagePreview').classList.add('hidden');
+                document.getElementById('bookImageInput').value = '';
+
+                document.getElementById('bookModal').classList.remove('hidden');
+            }
+        }
+
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
+            
+            // Auto close after 3 seconds
+            setTimeout(() => {
+                closeSuccessModal();
+            }, 3000);
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

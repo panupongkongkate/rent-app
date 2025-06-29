@@ -1,0 +1,2 @@
+UPDATE Employees SET PasswordHash = '$2a$11$C2q0s1aImT96hyEexizymuZH/kJVQLrVXc955tsvGT4jqU7jB39MO' WHERE Username = 'admin01';
+UPDATE Employees SET PasswordHash = '$2a$11$7vDNXlIq1qV6VzDiIFJJmOE7PpFB0gd3oOimU.9v9TPrP2or94cwy' WHERE Username = 'staff01';

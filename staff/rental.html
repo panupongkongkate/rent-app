@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการการยืม-คืน - ระบบเช่ายืมหนังสือการ์ตูน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            900: '#164e63'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 overflow-hidden flex">
+    <!-- Loading Spinner -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                <span class="text-gray-700">กำลังดำเนินการ...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Desktop Sidebar -->
+    <div class="h-screen w-72 bg-white/95 backdrop-blur-sm shadow-2xl border-r border-slate-200/50 lg:block hidden flex flex-col" id="sidebar">
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200 flex-shrink-0">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <!-- Staff Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูพนักงาน</h3>
+                </div>
+                
+                <a href="/staff/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/staff/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/staff/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-orange-500 bg-orange-50 rounded-lg group-hover:bg-orange-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เครื่องมือ</h3>
+                </div>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4 flex-shrink-0">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Staff</p>
+                    <p class="text-xs text-slate-500 user-role">พนักงาน</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="lg:hidden fixed inset-0 z-20 bg-black bg-opacity-50 hidden" id="sidebarOverlay"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div class="lg:hidden fixed inset-y-0 left-0 z-30 w-72 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 ease-in-out" id="mobileSidebar">
+        <!-- Copy of desktop sidebar content for mobile -->
+        <!-- Header -->
+        <div class="h-20 flex items-center px-6 border-b border-slate-200">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl rotate-3 opacity-20"></div>
+                    <div class="relative bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Comic Rental</h1>
+                    <p class="text-sm text-slate-500">ระบบจัดการหนังสือการ์ตูน</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <!-- Staff Section -->
+            <div class="mb-6">
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เมนูพนักงาน</h3>
+                </div>
+                
+                <a href="/staff/dashboard.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-emerald-500 bg-emerald-50 rounded-lg group-hover:bg-emerald-100">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                    <span>แดชบอร์ด</span>
+                </a>
+
+                <a href="/staff/rental.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg transform hover:scale-[1.02] transition-all">
+                    <div class="mr-3 p-2 bg-white/20 rounded-lg">
+                        <i class="fas fa-exchange-alt text-lg"></i>
+                    </div>
+                    <span>ยืม / คืนหนังสือ</span>
+                    <div class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                </a>
+
+                <a href="/staff/customers.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-purple-500 bg-purple-50 rounded-lg group-hover:bg-purple-100">
+                        <i class="fas fa-users text-lg"></i>
+                    </div>
+                    <span>จัดการลูกค้า</span>
+                </a>
+
+                <a href="/staff/reports.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-orange-500 bg-orange-50 rounded-lg group-hover:bg-orange-100">
+                        <i class="fas fa-chart-bar text-lg"></i>
+                    </div>
+                    <span>รายงานและสถิติ</span>
+                </a>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div>
+                <div class="px-3 mb-3">
+                    <h3 class="text-xs font-semibold text-slate-600 uppercase tracking-wider">เครื่องมือ</h3>
+                </div>
+
+                <a href="/search.html" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl text-slate-700 hover:bg-slate-100 hover:shadow-md transition-all duration-200">
+                    <div class="mr-3 p-2 text-green-500 bg-green-50 rounded-lg group-hover:bg-green-100">
+                        <i class="fas fa-search text-lg"></i>
+                    </div>
+                    <span>ค้นหาหนังสือ</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-slate-200 p-4">
+            <div class="flex items-center mb-4">
+                <div class="relative">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm font-semibold text-slate-800 user-name">Staff</p>
+                    <p class="text-xs text-slate-500 user-role">พนักงาน</p>
+                </div>
+            </div>
+            
+            <button onclick="auth.logout()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>ออกจากระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile menu button -->
+    <div class="lg:hidden">
+        <button id="sidebarToggle" class="fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-md">
+            <i class="fas fa-bars text-gray-600"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 h-screen overflow-y-auto">
+        <!-- Header -->
+        <header class="bg-white/70 backdrop-blur-sm shadow-sm border-b border-slate-200/50">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">จัดการการยืม-คืน</h1>
+                        <p class="text-sm sm:text-base text-slate-600 mt-1">ระบบยืมและคืนหนังสือการ์ตูน</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right hidden sm:block bg-white/50 backdrop-blur-sm rounded-xl p-3 border border-slate-200/50">
+                            <p class="text-xs sm:text-sm text-slate-500">วันที่</p>
+                            <p class="text-sm sm:text-base font-semibold text-slate-700" id="currentDate"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-6 min-h-full">
+            <!-- Action Tabs -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="flex space-x-8 px-6">
+                        <button id="borrowTab" class="py-4 px-1 border-b-2 border-green-500 font-medium text-sm text-green-600" onclick="showTab('borrow')">
+                            <i class="fas fa-plus-circle mr-2"></i>ยืมหนังสือ
+                        </button>
+                        <button id="returnTab" class="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" onclick="showTab('return')">
+                            <i class="fas fa-undo mr-2"></i>คืนหนังสือ
+                        </button>
+                        <button id="overviewTab" class="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" onclick="showTab('overview')">
+                            <i class="fas fa-chart-line mr-2"></i>ภาพรวม
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Borrow Book Section -->
+                <div id="borrowSection" class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">ยืมหนังสือ</h3>
+                    
+                    <!-- Customer Section -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-sm font-medium text-gray-700">เลือกลูกค้า</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" id="customerFilter" placeholder="ค้นหาลูกค้า..." 
+                                       class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <button onclick="loadAllCustomers()" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer List -->
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <div id="customerList" class="max-h-60 overflow-y-auto bg-white">
+                                <!-- Customer items will be loaded here -->
+                                <div class="p-4 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin"></i> กำลังโหลด...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Selected Customer -->
+                        <div id="selectedCustomer" class="hidden mt-3">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-semibold text-gray-800" id="customerName"></p>
+                                        <p class="text-sm text-gray-600" id="customerPhone"></p>
+                                        <p class="text-xs text-green-600">กำลังยืม: <span id="currentRentals">0</span> เล่ม</p>
+                                    </div>
+                                    <button onclick="clearCustomer()" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Section -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-sm font-medium text-gray-700">เลือกหนังสือ</label>
+                            <div class="flex items-center space-x-2">
+                                <select id="categoryFilter" class="px-3 py-1 text-sm border border-gray-300 rounded-lg">
+                                    <option value="">ทุกหมวดหมู่</option>
+                                </select>
+                                <input type="text" id="bookFilter" placeholder="ค้นหาหนังสือ..." 
+                                       class="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <button onclick="loadAvailableBooks()" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Book List -->
+                        <div class="border border-gray-300 rounded-lg overflow-hidden">
+                            <div id="bookList" class="max-h-80 overflow-y-auto bg-white">
+                                <!-- Book items will be loaded here -->
+                                <div class="p-4 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin"></i> กำลังโหลด...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Books -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">หนังสือที่เลือก</label>
+                        <div id="selectedBooks" class="space-y-3 min-h-[100px] bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4">
+                            <p class="text-gray-500 text-center">ยังไม่ได้เลือกหนังสือ</p>
+                        </div>
+                    </div>
+
+                    <!-- Rental Settings -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนวันที่ยืม</label>
+                            <select id="rentalDays" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="7">7 วัน</option>
+                                <option value="14" selected>14 วัน</option>
+                                <option value="21">21 วัน</option>
+                                <option value="30">30 วัน</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">วันที่ครบกำหนด</label>
+                            <input type="date" id="dueDate" class="w-full px-3 py-3 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Total & Submit -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 mb-6 border border-green-200">
+                        <div class="flex items-center justify-between text-xl font-bold">
+                            <span>ค่าเช่ารวม:</span>
+                            <span class="text-green-600" id="totalAmount">฿0</span>
+                        </div>
+                    </div>
+
+                    <button id="submitBorrow" onclick="submitBorrow()" disabled 
+                            class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg">
+                        <i class="fas fa-check mr-2"></i>ยืมหนังสือ
+                    </button>
+                </div>
+
+                <!-- Return Book Section -->
+                <div id="returnSection" class="p-6 hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">คืนหนังสือ</h3>
+                    
+                    <!-- Active Rentals Search -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ค้นหารายการยืม</label>
+                        <div class="relative">
+                            <input type="text" id="rentalSearch" placeholder="ใส่ชื่อลูกค้า หรือ ชื่อหนังสือ" 
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Rentals List -->
+                    <div class="space-y-4" id="activeRentalsList">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="rentalsPagination" class="mt-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-4">
+                        <!-- Pagination content will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Overview Section -->
+                <div id="overviewSection" class="p-6 hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">ภาพรวมการยืม-คืน</h3>
+                    
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                            <div class="flex items-center">
+                                <i class="fas fa-book-open text-2xl mr-3"></i>
+                                <div>
+                                    <p class="text-sm opacity-90">กำลังยืมทั้งหมด</p>
+                                    <p class="text-2xl font-bold" id="totalActiveRentals">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-4 text-white">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-2xl mr-3"></i>
+                                <div>
+                                    <p class="text-sm opacity-90">เกินกำหนด</p>
+                                    <p class="text-2xl font-bold" id="totalOverdue">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-check text-2xl mr-3"></i>
+                                <div>
+                                    <p class="text-sm opacity-90">คืนวันนี้</p>
+                                    <p class="text-2xl font-bold" id="returnedToday">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-4 text-white">
+                            <div class="flex items-center">
+                                <i class="fas fa-coins text-2xl mr-3"></i>
+                                <div>
+                                    <p class="text-sm opacity-90">รายได้วันนี้</p>
+                                    <p class="text-xl font-bold" id="todayRevenue">฿0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">กิจกรรมล่าสุด</h4>
+                        <div id="recentActivities" class="space-y-3">
+                            <!-- Dynamic content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/pagination.js"></script>
+    <script>
+        let selectedCustomerId = null;
+        let selectedBooks = [];
+        let customerSuggestions = [];
+        let bookSuggestions = [];
+        
+        // List-based selection variables
+        let allCustomers = [];
+        let allBooks = [];
+        let allCategories = [];
+        
+        // Pagination variables
+        let currentPage = 1;
+        let pageSize = 10;
+        let totalPages = 1;
+        let totalItems = 0;
+        let rentalsPagination = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Mobile sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                mobileSidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            }
+
+            sidebarToggle?.addEventListener('click', toggleSidebar);
+            sidebarOverlay?.addEventListener('click', toggleSidebar);
+
+            // Set current date
+            const currentDate = new Date().toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = currentDate;
+
+            // Initialize rental days change handler
+            document.getElementById('rentalDays').addEventListener('change', updateDueDate);
+            updateDueDate();
+
+            // Load active rentals for return section
+            await loadActiveRentals();
+
+            // Setup search handlers
+            setupSearchHandlers();
+            
+            // Load customers and books
+            await loadAllCustomers();
+            await loadAvailableBooks();
+            await loadCategories();
+
+            // Load overview data
+            await loadOverviewData();
+        });
+
+        function showTab(tab) {
+            const borrowTab = document.getElementById('borrowTab');
+            const returnTab = document.getElementById('returnTab');
+            const overviewTab = document.getElementById('overviewTab');
+            const borrowSection = document.getElementById('borrowSection');
+            const returnSection = document.getElementById('returnSection');
+            const overviewSection = document.getElementById('overviewSection');
+
+            // Reset all tabs
+            borrowTab.className = 'py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300';
+            returnTab.className = 'py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300';
+            overviewTab.className = 'py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300';
+            
+            borrowSection.classList.add('hidden');
+            returnSection.classList.add('hidden');
+            overviewSection.classList.add('hidden');
+
+            if (tab === 'borrow') {
+                borrowTab.className = 'py-4 px-1 border-b-2 border-green-500 font-medium text-sm text-green-600';
+                borrowSection.classList.remove('hidden');
+            } else if (tab === 'return') {
+                returnTab.className = 'py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600';
+                returnSection.classList.remove('hidden');
+                loadActiveRentals();
+            } else if (tab === 'overview') {
+                overviewTab.className = 'py-4 px-1 border-b-2 border-yellow-500 font-medium text-sm text-yellow-600';
+                overviewSection.classList.remove('hidden');
+                loadOverviewData();
+            }
+        }
+
+        function setupSearchHandlers() {
+            // Customer filter
+            const customerFilter = document.getElementById('customerFilter');
+            customerFilter.addEventListener('input', debounce(filterCustomers, 300));
+
+            // Book filter
+            const bookFilter = document.getElementById('bookFilter');
+            bookFilter.addEventListener('input', debounce(filterBooks, 300));
+            
+            // Category filter
+            const categoryFilter = document.getElementById('categoryFilter');
+            categoryFilter.addEventListener('change', filterBooks);
+
+            // Rental search
+            const rentalSearch = document.getElementById('rentalSearch');
+            rentalSearch.addEventListener('input', debounce(filterActiveRentals, 300));
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+
+        function clearCustomer() {
+            selectedCustomerId = null;
+            document.getElementById('selectedCustomer').classList.add('hidden');
+            updateSubmitButton();
+        }
+        
+        // New functions for list-based selection
+        async function loadAllCustomers() {
+            try {
+                const response = await api.customers.getAll();
+                allCustomers = Array.isArray(response) ? response : (response.data || response.items || []);
+                displayCustomerList(allCustomers);
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                document.getElementById('customerList').innerHTML = '<div class="p-4 text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
+            }
+        }
+        
+        async function loadAvailableBooks() {
+            try {
+                const response = await api.books.getAll();
+                const books = Array.isArray(response) ? response : (response.data || response.items || []);
+                // Filter only available books
+                allBooks = books.filter(book => book.status === 'Available');
+                displayBookList(allBooks);
+            } catch (error) {
+                console.error('Error loading books:', error);
+                document.getElementById('bookList').innerHTML = '<div class="p-4 text-center text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>';
+            }
+        }
+        
+        async function loadCategories() {
+            try {
+                const response = await api.categories.getAll();
+                allCategories = Array.isArray(response) ? response : (response.data || response.items || []);
+                const categoryFilter = document.getElementById('categoryFilter');
+                categoryFilter.innerHTML = '<option value="">ทุกหมวดหมู่</option>' + 
+                    allCategories.map(cat => `<option value="${cat.categoryId}">${cat.categoryName}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        function displayCustomerList(customers) {
+            const container = document.getElementById('customerList');
+            if (customers.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-gray-500">ไม่พบลูกค้า</div>';
+                return;
+            }
+            
+            container.innerHTML = customers.map(customer => `
+                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 ${selectedCustomerId === customer.customerId ? 'bg-green-50' : ''}" 
+                     onclick="selectCustomerFromList(${customer.customerId})">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-semibold">${customer.fullName}</div>
+                            <div class="text-sm text-gray-600">${customer.phone}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gray-500">กำลังยืม: ${customer.totalBorrowed || 0} เล่ม</div>
+                            ${selectedCustomerId === customer.customerId ? '<i class="fas fa-check text-green-600"></i>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function displayBookList(books) {
+            const container = document.getElementById('bookList');
+            if (books.length === 0) {
+                container.innerHTML = '<div class="p-4 text-center text-gray-500">ไม่พบหนังสือที่ว่าง</div>';
+                return;
+            }
+            
+            container.innerHTML = books.map(book => {
+                const isSelected = selectedBooks.some(b => b.bookId === book.bookId);
+                return `
+                    <div class="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0 ${isSelected ? 'bg-blue-50' : ''}" 
+                         onclick="toggleBookSelection(${book.bookId})">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="font-semibold">${book.title}</div>
+                                <div class="text-sm text-gray-600">${book.author} ${book.volume ? `เล่ม ${book.volume}` : ''}</div>
+                                <div class="text-xs text-gray-500">${book.categoryName || 'ไม่ระบุหมวดหมู่'} • ${book.shelfLocation || '-'}</div>
+                            </div>
+                            <div class="text-right ml-4">
+                                <div class="font-semibold text-green-600">฿${book.rentalPrice}</div>
+                                ${isSelected ? '<i class="fas fa-check-circle text-blue-600"></i>' : '<i class="far fa-circle text-gray-400"></i>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function selectCustomerFromList(customerId) {
+            const customer = allCustomers.find(c => c.customerId === customerId);
+            if (customer) {
+                selectedCustomerId = customerId;
+                document.getElementById('customerName').textContent = customer.fullName;
+                document.getElementById('customerPhone').textContent = customer.phone;
+                document.getElementById('currentRentals').textContent = customer.totalBorrowed || 0;
+                document.getElementById('selectedCustomer').classList.remove('hidden');
+                displayCustomerList(allCustomers); // Refresh to show selection
+                updateSubmitButton();
+            }
+        }
+        
+        function toggleBookSelection(bookId) {
+            const book = allBooks.find(b => b.bookId === bookId);
+            if (!book) return;
+            
+            const existingIndex = selectedBooks.findIndex(b => b.bookId === bookId);
+            if (existingIndex >= 0) {
+                // Remove from selection
+                selectedBooks.splice(existingIndex, 1);
+            } else {
+                // Add to selection
+                selectedBooks.push(book);
+            }
+            
+            displayBookList(allBooks); // Refresh to show selection
+            displaySelectedBooks();
+            updateTotalAmount();
+            updateSubmitButton();
+        }
+        
+        function filterCustomers() {
+            const query = document.getElementById('customerFilter').value.toLowerCase();
+            const filtered = allCustomers.filter(customer => 
+                customer.fullName.toLowerCase().includes(query) ||
+                customer.phone.includes(query)
+            );
+            displayCustomerList(filtered);
+        }
+        
+        function filterBooks() {
+            const query = document.getElementById('bookFilter').value.toLowerCase();
+            const categoryId = document.getElementById('categoryFilter').value;
+            
+            let filtered = allBooks;
+            
+            if (query) {
+                filtered = filtered.filter(book => 
+                    book.title.toLowerCase().includes(query) ||
+                    book.author.toLowerCase().includes(query) ||
+                    (book.isbn && book.isbn.includes(query))
+                );
+            }
+            
+            if (categoryId) {
+                filtered = filtered.filter(book => book.categoryId == categoryId);
+            }
+            
+            displayBookList(filtered);
+        }
+
+
+        function removeBook(bookId) {
+            selectedBooks = selectedBooks.filter(b => b.bookId !== bookId);
+            displaySelectedBooks();
+            updateTotalAmount();
+            updateSubmitButton();
+        }
+
+        function displaySelectedBooks() {
+            const container = document.getElementById('selectedBooks');
+            if (selectedBooks.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">ยังไม่ได้เลือกหนังสือ</p>';
+            } else {
+                container.innerHTML = selectedBooks.map(book => `
+                    <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3">
+                        <div class="flex items-center space-x-3">
+                            <img src="${book.coverImageUrl || 'http://localhost:5081/placeholder-book.svg'}" 
+                                 alt="${book.title}" 
+                                 class="w-10 h-14 object-cover rounded border"
+                                 onerror="this.src='http://localhost:5081/placeholder-book.svg'">
+                            <div>
+                                <p class="font-semibold">${book.title}</p>
+                                <p class="text-sm text-gray-600">${book.author}</p>
+                                <p class="text-xs text-green-600">${utils.formatCurrency(book.rentalPrice)}</p>
+                            </div>
+                        </div>
+                        <button onclick="removeBook(${book.bookId})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateTotalAmount() {
+            const total = selectedBooks.reduce((sum, book) => sum + book.rentalPrice, 0);
+            document.getElementById('totalAmount').textContent = utils.formatCurrency(total);
+        }
+
+        function updateDueDate() {
+            const days = parseInt(document.getElementById('rentalDays').value);
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + days);
+            document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
+        }
+
+        function updateSubmitButton() {
+            const submitButton = document.getElementById('submitBorrow');
+            const canSubmit = selectedCustomerId && selectedBooks.length > 0;
+            submitButton.disabled = !canSubmit;
+        }
+
+        async function submitBorrow() {
+            if (!selectedCustomerId || selectedBooks.length === 0) return;
+            
+            // Get customer and prepare confirmation details
+            const customer = allCustomers.find(c => c.customerId === selectedCustomerId);
+            const rentalDays = parseInt(document.getElementById('rentalDays').value);
+            const totalAmount = parseFloat(document.getElementById('totalAmount').textContent.replace('฿', '').replace(',', ''));
+            
+            // Build confirmation message
+            let confirmMsg = `ยืนยันการยืมหนังสือ\n\n`;
+            confirmMsg += `ลูกค้า: ${customer.fullName} (${customer.phone})\n`;
+            confirmMsg += `จำนวนหนังสือ: ${selectedBooks.length} เล่ม\n`;
+            confirmMsg += `ระยะเวลา: ${rentalDays} วัน\n`;
+            confirmMsg += `ค่าเช่ารวม: ฿${totalAmount.toFixed(2)}\n\n`;
+            confirmMsg += `รายการหนังสือ:\n`;
+            selectedBooks.forEach((book, index) => {
+                confirmMsg += `${index + 1}. ${book.title} - ฿${book.rentalPrice}\n`;
+            });
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+
+            try {
+                utils.showLoading();
+                
+                const rentalDays = parseInt(document.getElementById('rentalDays').value);
+                const notes = document.getElementById('borrowNotes')?.value || '';
+                
+                // Process each book separately
+                const results = [];
+                const errors = [];
+                
+                for (const book of selectedBooks) {
+                    try {
+                        const rentalData = {
+                            customerId: selectedCustomerId,
+                            bookId: book.bookId,  // Send single bookId instead of array
+                            rentalDays: rentalDays,
+                            notes: notes
+                        };
+                        
+                        const result = await api.rentals.borrow(rentalData);
+                        results.push({ book: book.title, success: true });
+                    } catch (error) {
+                        console.error(`Error borrowing book ${book.title}:`, error);
+                        errors.push({ book: book.title, error: error.message });
+                    }
+                }
+                
+                utils.hideLoading();
+                
+                // Show results
+                if (results.length > 0) {
+                    utils.showToast(`ยืมหนังสือสำเร็จ ${results.length} เล่ม`, 'success');
+                }
+                
+                if (errors.length > 0) {
+                    const errorMsg = errors.map(e => `${e.book}: ${e.error}`).join('\n');
+                    utils.showToast(`มีข้อผิดพลาด:\n${errorMsg}`, 'error');
+                }
+                
+                // Reset form only if at least one book was borrowed successfully
+                if (results.length > 0) {
+                    clearCustomer();
+                    selectedBooks = [];
+                    displaySelectedBooks();
+                    updateTotalAmount();
+                    // Reload lists
+                    await loadAllCustomers();
+                    await loadAvailableBooks();
+                }
+                
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการยืมหนังสือ', 'error');
+                console.error('Borrow error:', error);
+            }
+        }
+
+        async function loadActiveRentals(page = 1) {
+            try {
+                currentPage = page;
+                
+                // Build API parameters
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    pageSize: pageSize,
+                    status: 'Active'
+                });
+                
+                const response = await api.get(`/rentals?${params.toString()}`);
+                
+                if (response.data) {
+                    const rentals = response.data || [];
+                    totalItems = response.totalItems || 0;
+                    totalPages = response.totalPages || 1;
+                    
+                    displayActiveRentals(rentals);
+                    updatePagination();
+                } else {
+                    throw new Error(response.message || 'Failed to load rentals');
+                }
+            } catch (error) {
+                console.error('Error loading active rentals:', error);
+                document.getElementById('activeRentalsList').innerHTML = '<p class="text-red-500 text-center">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+                totalItems = 0;
+                totalPages = 1;
+                updatePagination();
+            }
+        }
+
+        function updatePagination() {
+            if (!rentalsPagination) {
+                rentalsPagination = new Pagination('rentalsPagination', {
+                    currentPage: currentPage,
+                    totalPages: totalPages,
+                    totalItems: totalItems,
+                    pageSize: pageSize,
+                    onPageChange: (page) => {
+                        loadActiveRentals(page);
+                    }
+                });
+            } else {
+                rentalsPagination.updatePagination(currentPage, totalPages, totalItems, pageSize);
+            }
+        }
+
+        function displayActiveRentals(rentals) {
+            const container = document.getElementById('activeRentalsList');
+            if (rentals.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">ไม่มีรายการยืมที่ยังไม่คืน</p>';
+                return;
+            }
+
+            container.innerHTML = rentals.map(rental => {
+                const isOverdue = new Date(rental.dueDate) < new Date();
+                const daysOverdue = isOverdue ? Math.ceil((new Date() - new Date(rental.dueDate)) / (1000 * 60 * 60 * 24)) : 0;
+                
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 ${isOverdue ? 'border-red-300 bg-red-50' : 'hover:shadow-md transition-shadow'}">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-4">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">${rental.bookTitle}</p>
+                                        <p class="text-sm text-gray-600">ลูกค้า: ${rental.customerName}</p>
+                                        <p class="text-xs text-gray-500">วันที่ยืม: ${utils.formatDate(rental.rentalDate)}</p>
+                                        <p class="text-xs text-gray-400">ID: ${rental.rentalId}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right mr-4">
+                                <p class="text-sm ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-600'}">
+                                    กำหนดคืน: ${utils.formatDate(rental.dueDate)}
+                                </p>
+                                ${isOverdue ? `<p class="text-xs text-red-600 font-semibold">เกิน ${daysOverdue} วัน</p>` : ''}
+                                <p class="text-sm font-semibold text-green-600">
+                                    ค่าเช่า: ${utils.formatCurrency(rental.rentalFee)}
+                                </p>
+                                ${isOverdue ? `<p class="text-xs text-red-600">ค่าปรับ: ${utils.formatCurrency(daysOverdue * 10)}</p>` : ''}
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <button onclick="returnBook(${rental.rentalId})" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-undo mr-1"></i>คืน
+                                </button>
+                                ${isOverdue ? `
+                                <button onclick="returnWithFine(${rental.rentalId}, ${daysOverdue * 10})" 
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-exclamation mr-1"></i>คืน+ปรับ
+                                </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterActiveRentals() {
+            const query = document.getElementById('rentalSearch').value.toLowerCase().trim();
+            const rentals = document.querySelectorAll('#activeRentalsList > div');
+            
+            rentals.forEach(rental => {
+                const text = rental.textContent.toLowerCase();
+                rental.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        async function returnBook(rentalId) {
+            if (!confirm('ยืนยันการคืนหนังสือ?')) return;
+
+            try {
+                utils.showLoading();
+                
+                await api.rentals.return(rentalId);
+                
+                utils.showToast('คืนหนังสือสำเร็จ', 'success');
+                await loadActiveRentals();
+                await loadOverviewData();
+                
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการคืนหนังสือ', 'error');
+                console.error('Return error:', error);
+            }
+        }
+
+        async function returnWithFine(rentalId, fineAmount) {
+            if (!confirm(`ยืนยันการคืนหนังสือพร้อมค่าปรับ ${utils.formatCurrency(fineAmount)}?`)) return;
+
+            try {
+                utils.showLoading();
+                
+                await api.rentals.returnWithFine(rentalId, fineAmount);
+                
+                utils.showToast('คืนหนังสือพร้อมค่าปรับสำเร็จ', 'success');
+                await loadActiveRentals();
+                await loadOverviewData();
+                
+                utils.hideLoading();
+            } catch (error) {
+                utils.hideLoading();
+                utils.showToast('เกิดข้อผิดพลาดในการคืนหนังสือ', 'error');
+                console.error('Return with fine error:', error);
+            }
+        }
+
+        async function loadOverviewData() {
+            try {
+                const stats = await api.dashboard.getStats();
+                
+                if (stats) {
+                    document.getElementById('totalActiveRentals').textContent = stats.active?.rentals || 0;
+                    document.getElementById('totalOverdue').textContent = stats.active?.overdue || 0;
+                    document.getElementById('returnedToday').textContent = stats.today?.returns || 0;
+                    document.getElementById('todayRevenue').textContent = utils.formatCurrency((stats.today?.revenue || 0) + (stats.today?.fines || 0));
+                }
+
+                // Load recent activities - this API might not exist yet
+                try {
+                    const activitiesResponse = await api.rentals.getRecentActivities();
+                    const activities = Array.isArray(activitiesResponse) ? activitiesResponse : (activitiesResponse.data || activitiesResponse.items || []);
+                    displayRecentActivities(activities);
+                } catch (activityError) {
+                    console.log('Recent activities API not available:', activityError);
+                    displayRecentActivities([]);
+                }
+            } catch (error) {
+                console.error('Error loading overview data:', error);
+                // Set default values
+                document.getElementById('totalActiveRentals').textContent = '0';
+                document.getElementById('totalOverdue').textContent = '0';
+                document.getElementById('returnedToday').textContent = '0';
+                document.getElementById('todayRevenue').textContent = utils.formatCurrency(0);
+                displayRecentActivities([]);
+            }
+        }
+
+        function displayRecentActivities(activities) {
+            const container = document.getElementById('recentActivities');
+            if (activities.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center">ไม่มีกิจกรรมล่าสุด</p>';
+                return;
+            }
+
+            container.innerHTML = activities.map(activity => {
+                const isRental = activity.type === 'Rental';
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full ${isRental ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'} flex items-center justify-center mr-3">
+                                <i class="fas ${isRental ? 'fa-plus' : 'fa-undo'} text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800">${activity.bookTitle}</p>
+                                <p class="text-sm text-gray-600">${activity.customerName} • ${isRental ? 'ยืม' : 'คืน'}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500">${utils.formatDateTime(activity.date)}</p>
+                            <span class="text-xs ${activity.status === 'Active' ? 'text-green-600' : 'text-gray-600'}">${activity.status === 'Active' ? 'กำลังยืม' : 'คืนแล้ว'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
