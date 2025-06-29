@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <!-- Background -->
+  <defs>
+    <!-- Drop shadow filter -->
+    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="1" dy="2" result="offset"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.2"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Clean white background -->
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="600" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#2c3e50">
+    ระบบเช่าหนังสือการ์ตูน (Comic Rental System)
+  </text>
+  
+  <text x="600" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#7f8c8d">
+    แผนผังการทำงานของระบบ
+  </text>
+  
+  <!-- Row 1: Authentication & Customer Management -->
+  <!-- Step 1: Login -->
+  <g transform="translate(150, 140)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#3498db"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">🔐</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">เข้าสู่ระบบ</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">Staff/Admin</text>
+  </g>
+  
+  <!-- Arrow 1 -->
+  <g transform="translate(290, 185)">
+    <path d="M 0 0 L 30 0 M 25 -5 L 30 0 L 25 5" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 2: Customer Management -->
+  <g transform="translate(340, 140)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#27ae60"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">👤</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">จัดการลูกค้า</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">สร้าง/แก้ไข/ค้นหา</text>
+  </g>
+  
+  <!-- Arrow 2 -->
+  <g transform="translate(480, 185)">
+    <path d="M 0 0 L 30 0 M 25 -5 L 30 0 L 25 5" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 3: Book Search -->
+  <g transform="translate(530, 140)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#f39c12"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">🔍</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">ค้นหาหนังสือ</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">ค้นหาหนังสือที่ต้องการ</text>
+  </g>
+  
+  <!-- Arrow 3 (down) -->
+  <g transform="translate(585, 260)">
+    <path d="M 0 0 L 0 30 M -5 25 L 0 30 L 5 25" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 4: Book Selection -->
+  <g transform="translate(530, 310)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#f39c12"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">📚</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">เลือกหนังสือ</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">ตรวจสอบสถานะ</text>
+  </g>
+  
+  <!-- Arrow 4 (left) -->
+  <g transform="translate(500, 355)">
+    <path d="M 0 0 L -30 0 M -25 -5 L -30 0 L -25 5" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 5: Create Rental -->
+  <g transform="translate(340, 310)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#9c27b0"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">📋</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">สร้างรายการเช่า</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">บันทึกข้อมูลการเช่า</text>
+  </g>
+  
+  <!-- Arrow 5 (left) -->
+  <g transform="translate(310, 355)">
+    <path d="M 0 0 L -30 0 M -25 -5 L -30 0 L -25 5" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 6: Payment -->
+  <g transform="translate(150, 310)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#e91e63"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">💳</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">ชำระเงิน</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">ชำระค่าเช่าหนังสือ</text>
+  </g>
+  
+  <!-- Arrow 6 (down) -->
+  <g transform="translate(205, 430)">
+    <path d="M 0 0 L 0 30 M -5 25 L 0 30 L 5 25" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 7: Book Return -->
+  <g transform="translate(150, 480)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#00bcd4"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">📖</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">คืนหนังสือ</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">ตรวจสอบและคืนหนังสือ</text>
+  </g>
+  
+  <!-- Arrow 7 (right) -->
+  <g transform="translate(290, 525)">
+    <path d="M 0 0 L 30 0 M 25 -5 L 30 0 L 25 5" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 8: Fine Calculation -->
+  <g transform="translate(340, 480)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#9c27b0"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">💰</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">คำนวณค่าปรับ</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">คำนวณค่าปรับ (ถ้าคืนช้า)</text>
+  </g>
+  
+  <!-- Arrow 8 (right) -->
+  <g transform="translate(480, 525)">
+    <path d="M 0 0 L 30 0 M 25 -5 L 30 0 L 25 5" stroke="#6c757d" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Step 9: Reports -->
+  <g transform="translate(530, 480)">
+    <rect width="120" height="100" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <circle cx="60" cy="25" r="18" fill="#f44336"/>
+    <text x="60" y="31" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white">📊</text>
+    <text x="60" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2c3e50">รายงาน</text>
+    <text x="60" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#6c757d">สร้างรายงานและสถิติ</text>
+  </g>
+  
+  <!-- Additional System Features -->
+  <g transform="translate(750, 160)">
+    <rect width="400" height="340" rx="15" fill="#f8f9fa" stroke="#e9ecef" stroke-width="1" filter="url(#dropShadow)"/>
+    <text x="200" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2c3e50">คุณสมบัติหลักของระบบ</text>
+    
+    <g transform="translate(30, 50)">
+      <text x="0" y="20" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบจัดการลูกค้า</text>
+      <text x="0" y="40" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบจัดการหนังสือ</text>
+      <text x="0" y="60" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบเช่า-คืนหนังสือ</text>
+      <text x="0" y="80" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบคำนวณค่าปรับ</text>
+      <text x="0" y="100" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบรายงานและสถิติ</text>
+      <text x="0" y="120" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบจัดการหมวดหมู่</text>
+      <text x="0" y="140" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบตั้งค่า</text>
+      <text x="0" y="160" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบอัพโหลดรูปภาพ</text>
+      <text x="0" y="180" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบ Authentication</text>
+      <text x="0" y="200" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบ Dashboard</text>
+      <text x="0" y="220" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบ Search &amp; Filter</text>
+      <text x="0" y="240" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบส่งออก Excel</text>
+      <text x="0" y="260" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบ Health Check</text>
+      <text x="0" y="280" font-family="Arial, sans-serif" font-size="14" fill="#28a745">✅ ระบบ Role-based Access</text>
+    </g>
+  </g>
+  
+  <!-- Footer -->
+  <text x="600" y="770" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">
+    Comic Rental System - Complete Business Flow Diagram
+  </text>
+</svg>

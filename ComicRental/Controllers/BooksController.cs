@@ -12,10 +12,12 @@ namespace ComicRental.Controllers
     public class BooksController : ControllerBase
     {
         private readonly ComicRentalContext _context;
+        private readonly IConfiguration _configuration;
 
-        public BooksController(ComicRentalContext context)
+        public BooksController(ComicRentalContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -49,7 +51,7 @@ namespace ComicRental.Controllers
                     b.RentalPrice,
                     b.Condition,
                     b.Status,
-                    CoverImageUrl = b.CoverImageData != null ? $"http://localhost:5081/api/books/{b.BookId}/image" : (string.IsNullOrEmpty(b.CoverImageUrl) ? null : (b.CoverImageUrl.StartsWith("http") ? b.CoverImageUrl : $"http://localhost:5081{b.CoverImageUrl}"))
+                    CoverImageUrl = b.CoverImageData != null ? $"{_configuration["ImageBaseUrl"]}/api/books/{b.BookId}/image" : (string.IsNullOrEmpty(b.CoverImageUrl) ? null : (b.CoverImageUrl.StartsWith("http") ? b.CoverImageUrl : $"{_configuration["ImageBaseUrl"]}{b.CoverImageUrl}"))
                 })
                 .ToListAsync();
 
@@ -90,7 +92,7 @@ namespace ComicRental.Controllers
                     b.RentalPrice,
                     b.Condition,
                     b.Status,
-                    CoverImageUrl = b.CoverImageData != null ? $"http://localhost:5081/api/books/{b.BookId}/image" : (string.IsNullOrEmpty(b.CoverImageUrl) ? null : (b.CoverImageUrl.StartsWith("http") ? b.CoverImageUrl : $"http://localhost:5081{b.CoverImageUrl}"))
+                    CoverImageUrl = b.CoverImageData != null ? $"{_configuration["ImageBaseUrl"]}/api/books/{b.BookId}/image" : (string.IsNullOrEmpty(b.CoverImageUrl) ? null : (b.CoverImageUrl.StartsWith("http") ? b.CoverImageUrl : $"{_configuration["ImageBaseUrl"]}{b.CoverImageUrl}"))
                 })
                 .ToListAsync();
 
@@ -186,7 +188,7 @@ namespace ComicRental.Controllers
 
                 return Ok(new { 
                     message = "อัพโหลดรูปภาพสำเร็จ", 
-                    imageUrl = $"http://localhost:5081/api/books/{id}/image" // URL สำหรับดึงรูปจาก BLOB
+                    imageUrl = $"{_configuration["ImageBaseUrl"]}/api/books/{id}/image" // URL สำหรับดึงรูปจาก BLOB
                 });
             }
             catch (Exception ex)

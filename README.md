@@ -2,6 +2,12 @@
 
 ระบบเช่าหนังสือการ์ตูนที่พัฒนาด้วย ASP.NET Core Web API และ Frontend ด้วย HTML/CSS/JavaScript พร้อม Tauri สำหรับ Desktop Application
 
+## แผนผังการทำงานของระบบ
+
+![Comic Rental System Flowchart](comic-rental-flowchart.svg)
+
+ระบบจัดการการเช่าหนังสือการ์ตูนครบวงจร ตั้งแต่การเข้าสู่ระบบ จัดการลูกค้า ค้นหาและเลือกหนังสือ สร้างรายการเช่า ชำระเงิน คืนหนังสือ คำนวณค่าปรับ จนถึงการสร้างรายงาน
+
 ## เทคโนโลยีที่ใช้
 
 ### Backend
@@ -15,7 +21,7 @@
 
 ### Frontend
 - **HTML5/CSS3/JavaScript** - Web Frontend
-- **Tauri** - Desktop Application
+- **Tauri** - Desktop Application (รองรับ Windows, macOS, Linux, Android, iOS)
 - **Live Server** - Development server
 
 ## ข้อกำหนดของระบบ
@@ -29,6 +35,12 @@
 ### สำหรับ Tauri (Desktop App)
 - **Rust** (latest stable)
 - **System dependencies** (ตามระบบปฏิบัติการ)
+
+### สำหรับ Android App
+- **Android Studio** หรือ **Android SDK**
+- **Java Development Kit (JDK)** 11 หรือสูงกว่า
+- **Android NDK** (สำหรับ native code)
+- **Tauri CLI v2** ที่รองรับ mobile
 
 ## การติดตั้ง
 
@@ -108,10 +120,24 @@ Frontend จะทำงานที่: `http://localhost:3000`
 npm run tauri dev
 ```
 
+**สำหรับ Android App:**
+```bash
+# ต้องรัน npm run dev ก่อน!
+npm run tauri android init
+npm run tauri android dev
+```
+
 #### ลำดับการรัน Development แบบเต็ม:
+
+**สำหรับ Desktop App:**
 1. **Terminal 1**: `npm run api` (Backend API)
 2. **Terminal 2**: `npm run dev` (Frontend Web Server) 
 3. **Terminal 3**: `npm run tauri dev` (Desktop App)
+
+**สำหรับ Android App:**
+1. **Terminal 1**: `npm run api` (Backend API)
+2. **Terminal 2**: `npm run dev` (Frontend Web Server)
+3. **Terminal 3**: `npm run tauri android dev` (Android App)
 
 หมายเหตุ: Tauri จะเชื่อมต่อไปที่ `http://localhost:3000` ดังนั้นต้องรัน `npm run dev` ก่อนเสมอ
 
@@ -123,9 +149,41 @@ cd ComicRental
 dotnet publish -c Release -o publish
 ```
 
-#### Build Tauri Desktop App
+#### Build Frontend
+Frontend ไม่ต้อง build เพิ่มเติม ใช้ไฟล์ HTML/CSS/JS ตรงๆ
+
+#### Build Android App
 ```bash
-npm run tauri build
+# Build สำหรับ Android
+npm run tauri android build
+
+# Build และ sign สำหรับ release
+npm run tauri android build --target aarch64-linux-android --release
+```
+
+### การติดตั้งและตั้งค่าสำหรับ Android
+
+#### 1. ติดตั้ง Android dependencies
+```bash
+# ติดตั้ง Android targets สำหรับ Rust
+rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+# เริ่มต้นโปรเจค Android
+npm run tauri android init
+```
+
+#### 2. การตั้งค่า Android
+- ตั้งค่า `ANDROID_HOME` environment variable
+- ตั้งค่า `JAVA_HOME` environment variable
+- เพิ่ม Android SDK tools ใน PATH
+
+#### 3. การทดสอบบน Android
+```bash
+# รันบน emulator
+npm run tauri android dev
+
+# รันบน device จริง (เปิด USB debugging)
+npm run tauri android dev --device
 ```
 
 ## โครงสร้างโปรเจค

@@ -22,7 +22,15 @@
       "Bash(pip install:*)",
       "Bash(curl:*)",
       "Bash(touch:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(sudo apt:*)",
+      "Bash(apt list:*)",
+      "Bash(wget:*)",
+      "Bash(unzip:*)",
+      "Bash(mv:*)",
+      "Bash(true)",
+      "Bash(export:*)",
+      "Bash(echo:*)"
     ],
     "deny": []
   }
