@@ -208,45 +208,36 @@ cd ComicRental
 dotnet publish -c Release -o publish
 ```
 
-#### Deploy Steps:
-1. **Upload Backend**:
-   - อัปโหลดไฟล์ใน `ComicRental/publish/` ไปยัง server
-   - ตั้งค่า connection string ใน `appsettings.json`
-   - ตั้งค่า environment variables สำหรับ JWT keys
+#### IIS Deployment (Windows Server)
 
-2. **Upload Frontend**:
-   - อัปโหลดไฟล์ HTML/CSS/JS ไปยัง web server
-   - ตั้งค่า API URL ใน `js/api.js` ให้ชื้อไปยัง production server
-
-3. **Web Server Configuration**:
-   ```nginx
-   # nginx configuration example
-   server {
-       listen 80;
-       server_name yourdomain.com;
-       
-       # Frontend static files
-       location / {
-           root /var/www/html;
-           try_files $uri $uri/ /index.html;
-       }
-       
-       # Backend API
-       location /api/ {
-           proxy_pass http://localhost:5081/;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-       }
-   }
+1. **ติดตั้ง Prerequisites**:
+   - IIS พร้อม ASP.NET Core Module
+   - .NET 9.0 Hosting Bundle
+   ```powershell
+   # Download และติดตั้งจาก Microsoft
+   # https://dotnet.microsoft.com/download/dotnet/9.0
    ```
 
-#### Environment Setup:
-```bash
-# Production environment variables
-export ASPNETCORE_ENVIRONMENT=Production
-export ConnectionStrings__DefaultConnection="your-production-db-string"
-export Jwt__Key="your-production-jwt-key"
-```
+2. **เตรียม Application Pool**:
+   - สร้าง Application Pool ใหม่
+   - ตั้งค่า .NET CLR Version เป็น "No Managed Code"
+   - ตั้งค่า Process Model Identity ตามความเหมาะสม
+
+3. **Deploy Backend API**:
+   - Copy ไฟล์ทั้งหมดจาก `ComicRental/publish/` ไป `C:\inetpub\wwwroot\comic-rental-api\`
+   - สร้าง Website ใหม่ใน IIS Manager สำหรับ API
+   - ชี้ไปที่ folder ที่ copy ไว้
+   - ตั้งค่า Application Pool ที่สร้างไว้
+
+5. **Deploy Frontend**:
+   - Copy ไฟล์ HTML/CSS/JS ทั้งหมด ไป `C:\inetpub\wwwroot\comic-rental-web\`
+   - รวมไฟล์: `index.html`, `search.html`, `admin/`, `staff/`, `js/`
+   - สร้าง Website แยกต่างหากใน IIS Manager สำหรับ Frontend
+   - แก้ไข API URL ใน `js/api.js` ให้ชี้ไปยัง API site
+   ```javascript
+   // ตัวอย่างใน js/api.js
+   const API_BASE_URL = 'http://your-server/api';
+   ```
 
 ### 2. Desktop Deployment
 
@@ -288,13 +279,13 @@ dotnet ef database update --environment Production
 ### 4. Security Considerations
 
 #### Production Checklist:
-- [ ] เปลี่ยน JWT secret key
-- [ ] ตั้งค่า HTTPS
-- [ ] เปิดใช้งาน CORS อย่างเหมาะสม
-- [ ] ตั้งค่า rate limiting
-- [ ] เปิดใช้งาน logging
-- [ ] สำรองข้อมูล database
-- [ ] ตั้งค่า firewall
+- เปลี่ยน JWT secret key
+- ตั้งค่า HTTPS
+- เปิดใช้งาน CORS อย่างเหมาะสม
+- ตั้งค่า rate limiting
+- เปิดใช้งาน logging
+- สำรองข้อมูล database
+- ตั้งค่า firewall
 
 ## การแก้ไขปัญหา
 
